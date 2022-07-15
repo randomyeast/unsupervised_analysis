@@ -40,6 +40,11 @@ class Normal(Distribution):
         ----------
         temperature: float, optional
             Additional scaling parameter for variance of the distribution.
+
+        Returns
+        -------
+        z: torch.tensor
+            the Gaussian distributed sample computed using the equation above.
         """
         std = torch.exp(self.logvar / 2)
         eps = torch.randn_like(std)
@@ -61,13 +66,19 @@ class Normal(Distribution):
         Parameters
         ----------
         value: torch.tensor
-            The value we are computing the NLL of.       
- 
+            The value (potentially multi-dimensional) we are computing the NLL
+            of. 
+
+        Returns
+        -------
+        nll: torch.tensor
+            the sum of the nll computed for each dimension of `value`.
         """
         pi = torch.FloatTensor([math.pi]).to(value.device)
         nll_element = (value - self.mean).pow(2) / \
             torch.exp(self.logvar) + self.logvar + torch.log(2 * pi)
-        return -0.5 * torch.sum(nll_element)
+        nll = -0.5 * torch.sum(nll_element)
+        return nll 
 
     @staticmethod
     def kl_divergence(normal_1, normal_2=None, free_bits=0.0):
@@ -94,6 +105,11 @@ class Normal(Distribution):
             collapsing into the unit Gaussian prior. If the KLD falls below 
             `free_bits` in a particular dimension, that dimension's KLD is 
             assigned to be `free_bits`.
+        
+        Returns
+        -------
+        kld: torch.tensor
+            the Kullback-Leibler divergence of `normal_1` from `normal_2`.
         """
 
         assert isinstance(normal_1, Normal)
