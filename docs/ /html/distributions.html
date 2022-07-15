@@ -88,6 +88,12 @@ collapsing into the unit Gaussian prior. If the KLD falls below
 assigned to be <cite>free_bits</cite>.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>kld</strong> – the Kullback-Leibler divergence of <cite>normal_1</cite> from <cite>normal_2</cite>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.tensor</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -105,7 +111,14 @@ standard deviation.</p>
 \frac{(x-\mu)^{2}}{2\sigma^{2}}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<em>torch.tensor</em>) – The value we are computing the NLL of.</p>
+<dd class="field-odd"><p><strong>value</strong> (<em>torch.tensor</em>) – The value (potentially multi-dimensional) we are computing the NLL
+of.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>nll</strong> – the sum of the nll computed for each dimension of <cite>value</cite>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -124,6 +137,12 @@ is computed from that:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>temperature</strong> (<em>float</em><em>, </em><em>optional</em>) – Additional scaling parameter for variance of the distribution.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>z</strong> – the Gaussian distributed sample computed using the equation above.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.tensor</p>
 </dd>
 </dl>
 </dd></dl>
