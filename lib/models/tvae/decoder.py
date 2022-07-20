@@ -54,15 +54,23 @@ class TVAEDecoder(nn.Module):
         actions = states[1:] - states[:-1]
 
         # Iterate through state reconstruction
-        for t in range(actions.size(0)):
+        curr_state, curr_action = states[0], actions[0]
+        for t in range(actions.size(0)-1):
             # Compute distribution of actions
-            action_likelihood = self.decode_action(states[t])
+            action_likelihood = self.decode_action(curr_state)
 
             # Compute the nll of the true action under the predicted distribution
-            self.log.losses['nll'] -= action_likelihood.log_prob(actions[t])
+            self.log.losses['nll'] -= action_likelihood.log_prob(curr_action)
 
             # Update hidden state in recurrent portion of decoder
-            self.update_hidden_state(states[t], actions[t])
+            self.update_hidden_state(curr_state, curr_action)
+            if hasattr(self, "teacher_force") and self.teacher_force:
+                curr_state, curr_action = states[t+1], actions[t+1]
+            # Use rollout procedure to succesively synthesize states
+            else:
+                curr_action = action_likelihood.sample()
+                curr_state = curr_state + curr_action
+
 
     def decode_action(self, state):
         # Inputs to recurrent unit: state, embedding, hidden state
