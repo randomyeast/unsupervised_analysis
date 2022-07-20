@@ -6,6 +6,7 @@ types, add them as modules to `lib.distributions`.
 
 .. automodule:: lib.models.tvae.core 
     :members:
+    :special-members:
 
 .. automodule:: lib.models.tvae.encoder
     :members:

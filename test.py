@@ -11,7 +11,7 @@ if __name__ == "__main__":
         'state_dim': 28,
         'z_dim': 32,
         'h_dim': 128,
-        'final_hidden': True
+        'final_hidden': True,
     }
 
     # Test input

@@ -20,9 +20,24 @@ class TVAE(BaseSequentialModel):
     }
 
     def __init__(self, model_config):
+        """Defines the model architecture
+
+        Attributes:
+            encoder (TVAEEncoder) 
+                Returns a posterior distribution over the latent space
+            
+            decoder (TVAEDecoder)
+                Reconstructs the input states from a sample from the posterior
+        """
+
         super().__init__(model_config)
 
     def _construct_model(self):
+        """
+        Creates encoder and decoder model attributes. Called by the 
+        ``__init__`` method in ``BaseSequentialModel``.
+        """
+
         # Override defaults using model config, if desired
         for param_key in self.loss_params.keys():
             if param_key in self.config.keys():
@@ -33,12 +48,23 @@ class TVAE(BaseSequentialModel):
         self.decoder = TVAEDecoder(self.log, **self.config)
     
     def _define_losses(self):
+        """
+        Creates loss entry in ``self.log`` object. Called by the ``__init__`` 
+        method in ``BaseSequentialModel``.
+        """
         self.log.add_loss("nll")
         self.log.add_loss("kld")
 
     def forward(self, states, reconstruct=False, embed=False):
-        """
-        Forward pass of the model
+        """Initialize the distribution with mean and logvar
+
+        Parameters
+        ----------
+        reconstruct : bool 
+            If true, return the reconstructed states
+
+        embed: bool
+            If true, return the mean of the inferred posterior
         """
         # Encode the states
         posterior = self.encoder(states)
@@ -53,6 +79,8 @@ class TVAE(BaseSequentialModel):
         return posterior
 
     def model_params(self):
+        """
+        Returns a list of all model parameters - used to optimize the learnable parameters"""
         params = list(self.encoder.enc_birnn.parameters()) + list(self.encoder.enc_fc.parameters())
         params += list(self.encoder.enc_mean.parameters()) + list(self.encoder.enc_logvar.parameters())
         params += list(self.decoder.dec_birnn.parameters()) + list(self.decoder.dec_action_fc.parameters()) 
