@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>lib.models.tvae &#8212; Kennedy lab unsupervised analysis tools 0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="lib.models" href="models.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="lib.models"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Kennedy lab unsupervised analysis tools 0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lib.html" >vq-triplet-treba.lib</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="models.html" accesskey="U">lib.models</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">lib.models.tvae</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="lib-models-tvae">
+<h1>lib.models.tvae<a class="headerlink" href="#lib-models-tvae" title="Permalink to this headline">¶</a></h1>
+<p>If you are interested in using any additional distribution
+types, add them as modules to <cite>lib.distributions</cite>.</p>
+<span class="target" id="module-lib.models.tvae.core"></span><dl class="py class">
+<dt class="sig sig-object py" id="lib.models.tvae.core.TVAE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.models.tvae.core.</span></span><span class="sig-name descname"><span class="pre">TVAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.tvae.core.TVAE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trajectory Variational Autoencder</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.models.tvae.core.TVAE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconstruct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.tvae.core.TVAE.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward pass of the model</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-lib.models.tvae.encoder"></span><dl class="py class">
+<dt class="sig sig-object py" id="lib.models.tvae.encoder.TVAEEncoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.models.tvae.encoder.</span></span><span class="sig-name descname"><span class="pre">TVAEEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.tvae.encoder.TVAEEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encoder module for the TVAE.</p>
+<p class="rubric">Notes</p>
+<p>The encoder consists of a bidirectional gated recurrent neural
+network (GRU) and 3 fully connected modules. In the default model
+configuration, the output of the final layer of the GRU is averaged
+over the sequence. This average over time is then passed through the
+first module of fully-connected layers, followed by two separate
+fully-connected modules, one for the mean and one for the log
+variance of the inferred posterior distribution. Calling the module
+on a batch of state sequences will return the inferred posterior
+distribution over the latent space. More details can be found in
+the initialization method and forward method.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.models.tvae.encoder.TVAEEncoder.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.tvae.encoder.TVAEEncoder.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the encoder network architecture</p>
+<p class="rubric">Notes</p>
+<p><strong>Recurrent portion of the encoder</strong></p>
+<p>For simplicty, the details of how GRUs work is omitted. Instead, the
+recurrent portion of the encoder can be thought of as a recurrent
+neural network (RNN) described by the equations:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{center}\\\begin{split}    a^{(t)} = (Wh^{(t-1)} + b_{W}) + (Ux^{(t)} + b_{U})
+    \\
+    h^{(t)} = \sigma(a^{(t)})\end{split}\\\end{center}\end{aligned}\end{align} \]</div>
+<p>where <span class="math notranslate nohighlight">\(h^{(t)}\)</span> is the hidden state at time <span class="math notranslate nohighlight">\(t\)</span>. The
+matrix <span class="math notranslate nohighlight">\(U\)</span> is a matrix of weights applied to the input at
+each time step, and <span class="math notranslate nohighlight">\(W\)</span> is a matrix of weights applied to the
+hidden state propagated from the previous time step. <span class="math notranslate nohighlight">\(b_{W}\)</span>
+and <span class="math notranslate nohighlight">\(b_{U}\)</span> are bias vectors. <span class="math notranslate nohighlight">\(\sigma\)</span> is the activation
+function which, in PyTorch, defaults to hyperbolic tangent.</p>
+<p>When calling <code class="docutils literal notranslate"><span class="pre">self.enc_birnn(x)</span></code>, x should be a tensor of shape
+<code class="docutils literal notranslate"><span class="pre">[seq_len,</span> <span class="pre">batch_size,</span> <span class="pre">state_dim*2]</span></code>. The output of
+<code class="docutils literal notranslate"><span class="pre">self.enc_birnn</span></code> is a tuple of tensors <code class="docutils literal notranslate"><span class="pre">outputs,</span> <span class="pre">hiddens</span></code>. The
+<code class="docutils literal notranslate"><span class="pre">outputs</span></code> tensor will be of shape <code class="docutils literal notranslate"><span class="pre">[seq_len,</span> <span class="pre">batch_size,</span>
+<span class="pre">rnn_dim]</span></code>. Indexing along the first dimension gives the value of
+<span class="math notranslate nohighlight">\(h^{(t)}\)</span> for each time step. The <code class="docutils literal notranslate"><span class="pre">hiddens</span></code> tensor will be
+of shape <code class="docutils literal notranslate"><span class="pre">[num_layers,</span> <span class="pre">batch_size,</span> <span class="pre">rnn_dim]</span></code>. Indexing along the
+<code class="docutils literal notranslate"><span class="pre">num_layers</span></code> dimension gives the computed hidden state at the
+final time step for each layer in the RNN.</p>
+<blockquote>
+<div><p><strong>Fully-connected portion of the encoder</strong></p>
+<p>The output of the RNN at each time step <span class="math notranslate nohighlight">\(h^{(t)}\)</span> is
+averaged over all <span class="math notranslate nohighlight">\(t\)</span> and passed through 2 fully-connected
+layers named <code class="docutils literal notranslate"><span class="pre">self.enc_fc</span></code>. The operation of passing input through
+the first layer can be described as:</p>
+<div class="math notranslate nohighlight">
+\[g = \sigma(Ah^{\text{avg}})\]</div>
+<p>where <span class="math notranslate nohighlight">\(\sigma\)</span> is a nonlinear activation function. The output
+of the second layer is then passed through two separate fully
+-connected layers named <code class="docutils literal notranslate"><span class="pre">self.enc_mean</span></code> and <code class="docutils literal notranslate"><span class="pre">self.enc_logvar</span></code>
+which learn to map the output of the previous fully-connected
+layers to the inferred mean and log-variance of the posterior
+distribution over the latent space.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<em>dict</em>) – <dl class="simple">
+<dt>A dictionary containing the following model attributes:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt><cite>state_dim</cite>: int</dt><dd><p>The dimensionality of the input space i.e. the number of
+elements in each input state vector, and the number of
+columns in <span class="math notranslate nohighlight">\(U\)</span>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><cite>rnn_dim</cite>: int</dt><dd><p>The dimensionality of the hidden state of the GRU. This
+corresponds to the number of rows in <span class="math notranslate nohighlight">\(U\)</span> and the
+dimensionality of the hidden states.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><cite>num_layers</cite>: int</dt><dd><p>The number of layers to use in the recurrent portion of
+the encoder.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><cite>h_dim</cite>: int</dt><dd><p>The dimensionality of the output of the fully-connected
+layer - in the equations above, this is the number of
+rows in <span class="math notranslate nohighlight">\(A\)</span>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><cite>z_dim</cite>: int</dt><dd><p>The dimensionality of the latent space.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.models.tvae.encoder.TVAEEncoder.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.tvae.encoder.TVAEEncoder.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the mean and log variance of the posterior distribution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>states</strong> (<em>torch.Tensor</em>) – A tensor of shape <code class="docutils literal notranslate"><span class="pre">[seq_len,</span> <span class="pre">batch_size,</span> <span class="pre">state_dim]</span></code>.</p></li>
+<li><p><strong>actions</strong> (<em>torch.Tensor</em><em> (</em><em>optional</em><em>)</em>) – A tensor of shape <code class="docutils literal notranslate"><span class="pre">[seq_len,</span> <span class="pre">batch_size,</span> <span class="pre">action_dim]</span></code>. If not
+provided, the actions will be computed as the change from one
+state to the next.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>posterior</strong> – A Gaussian distribution over the latent space parameterized by
+the mean and log variance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="distributions.html#lib.distributions.normal.Normal" title="lib.distributions.normal.Normal">Normal</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="models.html"
+                          title="previous chapter">lib.models</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/tvae.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="lib.models"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Kennedy lab unsupervised analysis tools 0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lib.html" >vq-triplet-treba.lib</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="models.html" >lib.models</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">lib.models.tvae</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Andrew Ulmer (adapted from Jennifer J. Sun).
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

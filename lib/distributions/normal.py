@@ -5,20 +5,21 @@ from .core import Distribution
 
 
 class Normal(Distribution):
-    r"""Object representing a Gaussian distribution
-
-    Parameters
-    ----------
-    mean : torch.tensor
-        Vector defining the mean of the Gaussian. 
-    logvar: torch.tensor
-        Vector defining the log-variance of the Gaussian. 
-    """
+    r"""Object representing a Gaussian distribution"""
 
     logvar_min = -16
     logvar_max = 16
 
     def __init__(self, mean, logvar):
+        """Initialize the distribution with mean and logvar
+
+        Parameters
+        ----------
+        mean : torch.tensor
+            Vector defining the mean of the Gaussian. 
+        logvar: torch.tensor
+            Vector defining the log-variance of the Gaussian. 
+        """
         super().__init__()
 
         self.mean = mean
@@ -64,13 +65,13 @@ class Normal(Distribution):
                 \frac{(x-\mu)^{2}}{2\sigma^{2}}
 
         Parameters
-        ----------
+        -----------
         value: torch.tensor
             The value (potentially multi-dimensional) we are computing the NLL
             of. 
 
         Returns
-        -------
+        --------
         nll: torch.tensor
             the sum of the nll computed for each dimension of `value`.
         """
@@ -87,27 +88,26 @@ class Normal(Distribution):
         Notes
         -----
         Note that as in the NLL computation, instead of using standard deviation 
-        we are using the inferred log-variance output by the encoder instead of
-        the standard deviation. 
+        we are using the inferred log-variance output by the encoder.
  
         .. math:: \frac{\sigma_1}{\sigma_{2}} + \frac{\sigma_{1}^2+(\mu_1 - 
                 \mu_2)^{2}}{2\sigma^{2}_{2}} 
 
         Parameters
-        ----------
-        normal_1: Normal 
+        -----------
+        `normal_1`: Normal 
             The first Gaussian in the equation above
-        normal_2: Normal, optional
+        `normal_2`: Normal, optional
             The second Gaussian in the equation above. If not included,assumed
             to be a unit Gaussian distribution.
-        free_bits: float, optional
+        `free_bits`: float, optional
             Scalar value intended used to keep the inferred posterior from 
             collapsing into the unit Gaussian prior. If the KLD falls below 
             `free_bits` in a particular dimension, that dimension's KLD is 
             assigned to be `free_bits`.
         
         Returns
-        -------
+        --------
         kld: torch.tensor
             the Kullback-Leibler divergence of `normal_1` from `normal_2`.
         """

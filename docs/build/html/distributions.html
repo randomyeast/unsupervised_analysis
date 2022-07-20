@@ -9,6 +9,7 @@
     <title>lib.distributions &#8212; Kennedy lab unsupervised analysis tools 0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/classic.css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -18,6 +19,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="lib.models" href="models.html" />
     <link rel="prev" title="vq-triplet-treba.lib" href="lib.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -29,6 +31,9 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="lib.models"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="lib.html" title="vq-triplet-treba.lib"
              accesskey="P">previous</a> |</li>
@@ -45,7 +50,8 @@
             
   <section id="lib-distributions">
 <h1>lib.distributions<a class="headerlink" href="#lib-distributions" title="Permalink to this headline">¶</a></h1>
-<p>Test nested module documentation</p>
+<p>If you are interested in using any additional distribution
+types, add them as modules to <cite>lib.distributions</cite>.</p>
 <span class="target" id="module-lib.distributions.core"></span><dl class="py class">
 <dt class="sig sig-object py" id="lib.distributions.core.Distribution">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.distributions.core.</span></span><span class="sig-name descname"><span class="pre">Distribution</span></span><a class="headerlink" href="#lib.distributions.core.Distribution" title="Permalink to this definition">¶</a></dt>
@@ -56,22 +62,13 @@
 <dt class="sig sig-object py" id="lib.distributions.normal.Normal">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.distributions.normal.</span></span><span class="sig-name descname"><span class="pre">Normal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logvar</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.distributions.normal.Normal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Object representing a Gaussian distribution</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>mean</strong> (<em>torch.tensor</em>) – Vector defining the mean of the Gaussian.</p></li>
-<li><p><strong>logvar</strong> (<em>torch.tensor</em>) – Vector defining the log-variance of the Gaussian.</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.distributions.normal.Normal.kl_divergence">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kl_divergence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normal_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normal_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">free_bits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.distributions.normal.Normal.kl_divergence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the kl-divergence between two Gaussian distributions.</p>
 <p class="rubric">Notes</p>
 <p>Note that as in the NLL computation, instead of using standard deviation
-we are using the inferred log-variance output by the encoder instead of
-the standard deviation.</p>
+we are using the inferred log-variance output by the encoder.</p>
 <div class="math notranslate nohighlight">
 \[\frac{\sigma_1}{\sigma_{2}} + \frac{\sigma_{1}^2+(\mu_1 -
 \mu_2)^{2}}{2\sigma^{2}_{2}}\]</div>
@@ -86,6 +83,12 @@ collapsing into the unit Gaussian prior. If the KLD falls below
 <cite>free_bits</cite> in a particular dimension, that dimension’s KLD is
 assigned to be <cite>free_bits</cite>.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>kld</strong> – the Kullback-Leibler divergence of <cite>normal_1</cite> from <cite>normal_2</cite>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -104,7 +107,14 @@ standard deviation.</p>
 \frac{(x-\mu)^{2}}{2\sigma^{2}}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<em>torch.tensor</em>) – The value we are computing the NLL of.</p>
+<dd class="field-odd"><p><strong>value</strong> (<em>torch.tensor</em>) – The value (potentially multi-dimensional) we are computing the NLL
+of.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>nll</strong> – the sum of the nll computed for each dimension of <cite>value</cite>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -124,6 +134,12 @@ is computed from that:</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>temperature</strong> (<em>float</em><em>, </em><em>optional</em>) – Additional scaling parameter for variance of the distribution.</p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>z</strong> – the Gaussian distributed sample computed using the equation above.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.tensor</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -142,6 +158,11 @@ is computed from that:</p>
     <h4>Previous topic</h4>
     <p class="topless"><a href="lib.html"
                           title="previous chapter">vq-triplet-treba.lib</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="models.html"
+                          title="next chapter">lib.models</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -173,6 +194,9 @@ is computed from that:</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="lib.models"
+             >next</a> |</li>
         <li class="right" >
           <a href="lib.html" title="vq-triplet-treba.lib"
              >previous</a> |</li>

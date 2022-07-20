@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>lib.models &#8212; Kennedy lab unsupervised analysis tools 0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="lib.models.tvae" href="tvae.html" />
+    <link rel="prev" title="lib.distributions" href="distributions.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tvae.html" title="lib.models.tvae"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="distributions.html" title="lib.distributions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Kennedy lab unsupervised analysis tools 0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lib.html" accesskey="U">vq-triplet-treba.lib</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">lib.models</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="lib-models">
+<h1>lib.models<a class="headerlink" href="#lib-models" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tvae.html">lib.models.tvae</a></li>
+</ul>
+</div>
+<span class="target" id="module-lib.models.core"></span><dl class="py class">
+<dt class="sig sig-object py" id="lib.models.core.BaseSequentialModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.models.core.</span></span><span class="sig-name descname"><span class="pre">BaseSequentialModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.core.BaseSequentialModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract model class that the other models, which are defined as
+submodules, inherit from.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.models.core.BaseSequentialModel.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.core.BaseSequentialModel.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes model attributes specified in the <cite>model_config</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model_config</strong> (<em>dict</em>) – <dl class="simple">
+<dt>A dictionary containing the following model attributes:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt><cite>recurrent</cite>: bool</dt><dd><p>Whether or not to make the encoder and decoder recurrent.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><cite>rnn_dim</cite>: int</dt><dd><p>An integer defining the number of features to use in the
+hidden units within a recurrent encoder and decoder, if
+using.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><cite>num_layers</cite>: int</dt><dd><p>The number of recurrent layers to use.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><cite>label_dim</cite>: the dimensionality of the labels used for</dt><dd><p>decoding tasks e.g. 3 if using 3 bins.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.models.core.BaseSequentialModel.init_hidden_state">
+<span class="sig-name descname"><span class="pre">init_hidden_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.core.BaseSequentialModel.init_hidden_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the hidden state to zeros for a recurrent neural network</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – TODO: Used to set one of the dimensions of the recurrent unit -
+EXPLAIN WHAT THIS MEANS!</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lib.models.core.BaseSequentialModel.num_parameters">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_parameters</span></span><a class="headerlink" href="#lib.models.core.BaseSequentialModel.num_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts the learnable parameters in the model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>self._num_parameters</strong> – If the parameters have not already been counted, count them
+store the resulting value as self._num_parameters, and return.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.models.core.BaseSequentialModel.update_hidden">
+<span class="sig-name descname"><span class="pre">update_hidden</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.core.BaseSequentialModel.update_hidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Single step update of the hidden unit in the reconstruction decoder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<em>torch.tensor</em>) – current state being passed as input to the recurrent unit</p></li>
+<li><p><strong>action</strong> (<em>torch.tensor</em>) – the change from the current state which will produce the
+following state.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>hiddens</strong> – TODO: the output of the final layer in an RNN? Maybe add some
+sort of diagram explaining this?</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="distributions.html"
+                          title="previous chapter">lib.distributions</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="tvae.html"
+                          title="next chapter">lib.models.tvae</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/models.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tvae.html" title="lib.models.tvae"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="distributions.html" title="lib.distributions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Kennedy lab unsupervised analysis tools 0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lib.html" >vq-triplet-treba.lib</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">lib.models</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Andrew Ulmer (adapted from Jennifer J. Sun).
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

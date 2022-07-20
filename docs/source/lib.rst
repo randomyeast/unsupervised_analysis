@@ -7,7 +7,4 @@ Test nested module documentation
    :maxdepth: 4
 
    distributions
-
-
-.. automodule:: lib.core 
-    :members:
+   models 
