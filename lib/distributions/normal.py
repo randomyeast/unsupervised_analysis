@@ -58,7 +58,7 @@ class Normal(Distribution):
         -----
         The negative log-likelihood (NLL) shown below, is given by the log of
         the probability density function. Note that in the actual computation 
-        we use the inferred log-variance output by the encoder instead of the
+        the inferred log-variance output by the encoder is used instead of the
         standard deviation.
  
         .. math:: \ln[\sigma] + \frac{1}{2}\ln[2\pi] + 

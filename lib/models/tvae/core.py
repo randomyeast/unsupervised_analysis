@@ -55,7 +55,7 @@ class TVAE(BaseSequentialModel):
         self.log.add_loss("nll")
         self.log.add_loss("kld")
 
-    def forward(self, states, reconstruct=False, embed=False):
+    def forward(self, states, embed=False):
         """Initialize the distribution with mean and logvar
 
         Parameters
@@ -66,6 +66,10 @@ class TVAE(BaseSequentialModel):
         embed: bool
             If true, return the mean of the inferred posterior
         """
+        # Reset the loss
+        self.log.reset()
+        states = states.transpose(0,1)
+
         # Encode the states
         posterior = self.encoder(states)
         
@@ -77,6 +81,18 @@ class TVAE(BaseSequentialModel):
         self.decoder(states, posterior.sample())      
 
         return posterior
+
+    def reconstruct(self, states):
+        """
+        Reconstructs the input states using a sample from the posterior
+        """
+        # Encode the states
+        posterior = self.encoder(states)
+        
+        # Use sample from posterior to generate a reconstruction
+        reconstruction = self.decoder(states, posterior.sample(), reconstruct=True) 
+
+        return reconstruction 
 
     def model_params(self):
         """

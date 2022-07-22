@@ -123,9 +123,23 @@ class BaseSequentialModel(nn.Module):
         return hiddens
 
     def _init_optimizer(self, lr=1e-4):
+        """Initializes the optimizer for the model"""
         self.model_optimizer = torch.optim.Adam(self.model_params(), lr=lr)
 
     def optimize(self, losses, grad_clip=10):
+        """
+        Optimizes the model parameters using the provided losses
+
+        Parameters
+        ----------
+        losses: dict
+            A dictionary of losses to be optimized. Should be located in the
+            `self.log.losses` attribute of whatever model you are working with.
+        grad_clip: float, optional
+            The maximum gradient magnitude to clip to. RNNs sometimes have issues
+            with exploding gradients, this is a way to prevent them.
+
+        """
         self.model_optimizer.zero_grad()
         model_losses = [value for key, value in losses.items()]
         model_loss = sum(model_losses)

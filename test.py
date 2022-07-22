@@ -1,27 +1,37 @@
 import torch
+from tqdm import tqdm
+from torch.utils.data import DataLoader
 
 from lib.models.tvae import TVAE
+from lib.util.datasets.random_trajectories import RandomTrajectories 
 
+torch.autograd.set_detect_anomaly(True)
 
 if __name__ == "__main__":
     model_config = {
-        'recurrent_dim': 128,
-        'rnn_dim': 128,
-        'num_layers': 3,
-        'state_dim': 28,
-        'z_dim': 32,
-        'h_dim': 128,
+        'recurrent_dim': 64,
+        'rnn_dim': 64,
+        'num_layers': 2,
+        'state_dim': 2,
+        'z_dim': 8,
+        'h_dim': 64,
         'final_hidden': True,
     }
 
-    # Test input
-    states = torch.randn(60, 28, 28) # [seq_len, batch_size, state_dim]
+    # Create dataset and data loader
+    data = RandomTrajectories() 
+    data_loader = DataLoader(data, batch_size=32, shuffle=True)
 
     # Instantiate model
     model = TVAE(model_config)
 
-    # Test forward pass of the model
-    posterior = model(states)
+    # Train the model
+    for num_epochs in tqdm(range(10)):
+        for batch in data_loader:
+            _ = model(batch)
+            reconstruction = model.reconstruct(batch) 
+            model.optimize(model.log.losses)
+        print(model.log)
 
-    model.optimize(model.log.losses)
+
     print('something')

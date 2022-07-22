@@ -11,3 +11,7 @@ types, add them as modules to `lib.distributions`.
 .. automodule:: lib.models.tvae.encoder
     :members:
     :special-members:
+
+.. automodule:: lib.models.tvae.decoder
+    :members:
+    :special-members:

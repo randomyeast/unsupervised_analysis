@@ -19,6 +19,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="lib.util" href="util.html" />
     <link rel="prev" title="lib.models" href="models.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -30,6 +31,9 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="util.html" title="lib.util"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="models.html" title="lib.models"
              accesskey="P">previous</a> |</li>
@@ -74,7 +78,7 @@ types, add them as modules to <cite>lib.distributions</cite>.</p>
 <dd><p>Reconstructs the input states from a sample from the posterior</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>TVAEDecoder</p>
+<dd class="field-odd"><p><a class="reference internal" href="#lib.models.tvae.decoder.TVAEDecoder" title="lib.models.tvae.decoder.TVAEDecoder">TVAEDecoder</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -83,7 +87,7 @@ types, add them as modules to <cite>lib.distributions</cite>.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.models.tvae.core.TVAE.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconstruct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.tvae.core.TVAE.forward" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.tvae.core.TVAE.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the distribution with mean and logvar</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -99,6 +103,12 @@ types, add them as modules to <cite>lib.distributions</cite>.</p>
 <dt class="sig sig-object py" id="lib.models.tvae.core.TVAE.model_params">
 <span class="sig-name descname"><span class="pre">model_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.tvae.core.TVAE.model_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of all model parameters - used to optimize the learnable parameters</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.models.tvae.core.TVAE.reconstruct">
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.tvae.core.TVAE.reconstruct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reconstructs the input states using a sample from the posterior</p>
 </dd></dl>
 
 </dd></dl>
@@ -156,10 +166,13 @@ for each time step.</p></li>
 <code class="docutils literal notranslate"><span class="pre">[num_layers,</span> <span class="pre">batch_size,</span> <span class="pre">rnn_dim]</span></code>. Indexing along the
 <code class="docutils literal notranslate"><span class="pre">num_layers</span></code> dimension gives the computed hidden state at
 the final time step for each layer in the RNN.</p></li>
+</ul>
+<p><strong>Model variations</strong></p>
+<ul class="simple">
 <li><p>There are two model variations available, each differs in what
 output of <code class="docutils literal notranslate"><span class="pre">enc_birnn</span></code> is passed to the fully connected
 portion of the encoder.</p>
-<ul class="simple">
+<ul>
 <li><p>The first variation is the default. If <span class="math notranslate nohighlight">\(T\)</span> and
 <span class="math notranslate nohighlight">\(M\)</span> represent the sequence length and number of
 layers used, respectively, this variation passes
@@ -181,7 +194,7 @@ specified by the <code class="docutils literal notranslate"><span class="pre">h_
 activation function and are within an attribute called
 <code class="docutils literal notranslate"><span class="pre">enc_fc</span></code>.</p></li>
 <li><p>The output of <code class="docutils literal notranslate"><span class="pre">enc_fc</span></code> is passed through two separate layers
-<code class="docutils literal notranslate"><span class="pre">enc_mean</span></code> and <code class="docutils literal notranslate"><span class="pre">enc_logvar</span></code> each of which learn to infer
+<code class="docutils literal notranslate"><span class="pre">enc_mean</span></code> and <code class="docutils literal notranslate"><span class="pre">enc_logvar</span></code> which learn to infer
 the mean and log variance that parameterize the posterior
 distribution over the latent space.</p></li>
 </ul>
@@ -218,7 +231,7 @@ two fully-connected layers in the encoder <code class="docutils literal notransl
 <li><dl class="simple">
 <dt><cite>z_dim</cite>: int</dt><dd><p>The dimensionality of the latent space mapped to by the
 separate fully-connected layers in the encoder
-<code class="docutils literal notranslate"><span class="pre">enc_mu</span></code> and <code class="docutils literal notranslate"><span class="pre">enc_logvar</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">enc_mean</span></code> and <code class="docutils literal notranslate"><span class="pre">enc_logvar</span></code>.</p>
 </dd>
 </dl>
 </li>
@@ -244,20 +257,163 @@ this is assumed to be <code class="docutils literal notranslate"><span class="pr
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>states</strong> (<em>torch.Tensor</em>) – A tensor of shape <code class="docutils literal notranslate"><span class="pre">[seq_len,</span> <span class="pre">batch_size,</span> <span class="pre">state_dim]</span></code>.</p></li>
-<li><p><strong>actions</strong> (<em>torch.Tensor</em><em> (</em><em>optional</em><em>)</em>) – A tensor of shape <code class="docutils literal notranslate"><span class="pre">[seq_len,</span> <span class="pre">batch_size,</span> <span class="pre">action_dim]</span></code>. If not
+<li><p><strong>states</strong> (<em>torch.Tensor</em>) – A tensor of shape <code class="docutils literal notranslate"><span class="pre">[batch_size,</span> <span class="pre">seq_len,</span> <span class="pre">state_dim]</span></code>.</p></li>
+<li><p><strong>actions</strong> (<em>torch.Tensor</em><em> (</em><em>optional</em><em>)</em>) – A tensor of shape <code class="docutils literal notranslate"><span class="pre">[batch_size,</span> <span class="pre">seq_len,</span> <span class="pre">action_dim]</span></code>. If not
 provided, the actions will be computed as the change from one
 state to the next.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>posterior</strong> – A Gaussian distribution over the latent space parameterized by
-the mean and log variance.</p>
+the mean and log variance (denoted above as <span class="math notranslate nohighlight">\(q_{\phi}(z|x)\)</span>)</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="distributions.html#lib.distributions.normal.Normal" title="lib.distributions.normal.Normal">Normal</a></p>
 </dd>
 </dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-lib.models.tvae.decoder"></span><dl class="py class">
+<dt class="sig sig-object py" id="lib.models.tvae.decoder.TVAEDecoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.models.tvae.decoder.</span></span><span class="sig-name descname"><span class="pre">TVAEDecoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.tvae.decoder.TVAEDecoder" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="lib.models.tvae.decoder.TVAEDecoder.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.tvae.decoder.TVAEDecoder.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the decoder network architecture</p>
+<img alt="_images/decoder.png" class="align-center" id="recurrent-decoder" src="_images/decoder.png" />
+<p class="rubric">Notes</p>
+<p><strong>Recurrent portion of decoder</strong></p>
+<ul class="simple">
+<li><p>The recurrent portion of the decoder is similar to the
+recurrent portion of the encoder but instead of using
+a state and an action as inputs at each timestep (shown
+in <a class="reference internal" href="#recurrent-encoder">recurrent-encoder</a>), it uses a state and the latent
+variable z as shown in <a class="reference internal" href="#recurrent-decoder">recurrent-decoder</a>.</p></li>
+</ul>
+<p><strong>Fully connected portion of decoder</strong></p>
+<ul class="simple">
+<li><p>The output of the last recurrent unit at each timestep,
+the state corresponding to the current timestep, and the
+latent variable z are concatenated and fed into a fully
+connected layer <code class="docutils literal notranslate"><span class="pre">dec_action_fc</span></code>.</p></li>
+<li><p>The output of <code class="docutils literal notranslate"><span class="pre">dec_action_fc</span></code> at each time step is fed
+into two separate fully connected layers <code class="docutils literal notranslate"><span class="pre">dec_action_mean</span></code>
+and <code class="docutils literal notranslate"><span class="pre">dec_action_logvar</span></code> to generate the mean and log
+variance of a distribution of actions, denoted above as
+<span class="math notranslate nohighlight">\(\pi\)</span>.</p></li>
+<li><p>The reconstruction loss at each time step is computed as
+the negative log likelihood of the true action <span class="math notranslate nohighlight">\(a_{t}\)</span>
+under the predicted distribution of actions <span class="math notranslate nohighlight">\(\pi\)</span>. The
+calculation is explained in more detail in Normal</p></li>
+</ul>
+<p><strong>Decoder variations</strong></p>
+<ul class="simple">
+<li><p>The default setting of the model is for <code class="docutils literal notranslate"><span class="pre">teacher_force</span></code>
+to be <code class="docutils literal notranslate"><span class="pre">False</span></code>. This means that the decoder will use an
+action sampled from the predicted distribution of actions
+at each timestep to <em>rollout</em> the trajectory used when
+computing the reconstruction loss. This process is shown in
+<a class="reference internal" href="#recurrent-decoder">recurrent-decoder</a> as <span class="math notranslate nohighlight">\(\tilde{s_{t}} = \tilde{s_{t-1}} + \tilde{a_{t-1}}\)</span>.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">teacher_force</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the decoder will use the
+true state as the input to the recurrent unit at the next
+time step.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log</strong> (<em>lib.log.Log</em>) – A Log object containing the losses used to train the model.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – <dl class="simple">
+<dt>A dictionary containing the following model attributes:</dt><dd><ul>
+<li><dl class="simple">
+<dt><cite>state_dim</cite>: int</dt><dd><p>The dimensionality of the input space.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><cite>rnn_dim</cite>: int</dt><dd><p>The dimensionality of the hidden state of the GRU.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><cite>num_layers</cite>: int</dt><dd><p>The number of layers to use in the recurrent
+portion of the decoder.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><cite>h_dim</cite>: int</dt><dd><p>The dimensionality of the space mapped to <code class="docutils literal notranslate"><span class="pre">dec_action_fc</span></code>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><cite>z_dim</cite>: int</dt><dd><p>The dimensionality of the latent space mapped to by the
+encoder.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><cite>teacher_force</cite>: bool</dt><dd><p>Whether or not to use the true or rolled-out state as inputs
+to the recurrent unit at each timestep.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.models.tvae.decoder.TVAEDecoder.decode_action">
+<span class="sig-name descname"><span class="pre">decode_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.tvae.decoder.TVAEDecoder.decode_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the pass through the fully connected layers of the decoder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> (<em>torch.Tensor</em>) – A tensor of shape <code class="docutils literal notranslate"><span class="pre">[batch_size,</span> <span class="pre">state_dim]</span></code> representing the
+initial state to use in reconstructing the trajectory.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>action_likelihood</strong> – A Normal object representing the Gaussian distribution of actions
+predicted by the decoder.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="distributions.html#lib.distributions.normal.Normal" title="lib.distributions.normal.Normal">Normal</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.models.tvae.decoder.TVAEDecoder.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconstruct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.tvae.decoder.TVAEDecoder.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a reconstruction of the input states using an initial
+state and a sample from the posterior distribution. The negative
+log likelihood of the true actions under the predicted distribution
+of actions is summed over time and stored in the <code class="docutils literal notranslate"><span class="pre">log</span></code> attribute
+of the parent class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>states</strong> (<em>torch.Tensor</em>) – A tensor of shape <code class="docutils literal notranslate"><span class="pre">[seq_len,</span> <span class="pre">batch_size,</span> <span class="pre">state_dim]</span></code> representing
+the the same trajectory used to generate the posterior distribution
+in the encoder module.</p></li>
+<li><p><strong>z</strong> (<em>torch.Tensor</em>) – A tensor of shape <code class="docutils literal notranslate"><span class="pre">[batch_size,</span> <span class="pre">z_dim]</span></code> representing the latent
+variable z sampled from the inferred posterior.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.models.tvae.decoder.TVAEDecoder.reset_policy">
+<span class="sig-name descname"><span class="pre">reset_policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.tvae.decoder.TVAEDecoder.reset_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the hidden state of the decoder to be all zeros
+and sets the temperature and latent variable z as attributes
+of the model</p>
 </dd></dl>
 
 </dd></dl>
@@ -275,6 +431,11 @@ the mean and log variance.</p>
     <h4>Previous topic</h4>
     <p class="topless"><a href="models.html"
                           title="previous chapter">lib.models</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="util.html"
+                          title="next chapter">lib.util</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -306,6 +467,9 @@ the mean and log variance.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="util.html" title="lib.util"
+             >next</a> |</li>
         <li class="right" >
           <a href="models.html" title="lib.models"
              >previous</a> |</li>

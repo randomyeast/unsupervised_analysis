@@ -70,6 +70,8 @@ class TVAEEncoder(nn.Module):
                 ``num_layers`` dimension gives the computed hidden state at 
                 the final time step for each layer in the RNN.
 
+            **Model variations**
+
             *   There are two model variations available, each differs in what
                 output of ``enc_birnn`` is passed to the fully connected
                 portion of the encoder.
@@ -95,7 +97,7 @@ class TVAEEncoder(nn.Module):
                 ``enc_fc``.
 
             *   The output of ``enc_fc`` is passed through two separate layers
-                ``enc_mean`` and ``enc_logvar`` each of which learn to infer
+                ``enc_mean`` and ``enc_logvar`` which learn to infer
                 the mean and log variance that parameterize the posterior 
                 distribution over the latent space.
 
@@ -120,7 +122,7 @@ class TVAEEncoder(nn.Module):
                 - `z_dim`: int
                     The dimensionality of the latent space mapped to by the
                     separate fully-connected layers in the encoder
-                    ``enc_mu`` and ``enc_logvar``.
+                    ``enc_mean`` and ``enc_logvar``.
                 - `final_hidden`: bool, optional
                     If ``True``, the final hidden state of the RNN is used as
                     described in the second model variation above. If omitted,
@@ -170,9 +172,9 @@ class TVAEEncoder(nn.Module):
         Parameters
         ----------
         states: torch.Tensor
-            A tensor of shape ``[seq_len, batch_size, state_dim]``.
+            A tensor of shape ``[batch_size, seq_len, state_dim]``.
         actions: torch.Tensor (optional)
-            A tensor of shape ``[seq_len, batch_size, action_dim]``. If not
+            A tensor of shape ``[batch_size, seq_len, action_dim]``. If not
             provided, the actions will be computed as the change from one
             state to the next.
         
@@ -180,7 +182,7 @@ class TVAEEncoder(nn.Module):
         -------
         posterior: Normal
             A Gaussian distribution over the latent space parameterized by
-            the mean and log variance.
+            the mean and log variance (denoted above as :math:`q_{\phi}(z|x)`)
         """
         # Compute actions as change from state to state
         actions = actions if actions else states[1:] - states[:-1]

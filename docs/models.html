@@ -125,6 +125,22 @@ store the resulting value as self._num_parameters, and return.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="lib.models.core.BaseSequentialModel.optimize">
+<span class="sig-name descname"><span class="pre">optimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad_clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.core.BaseSequentialModel.optimize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimizes the model parameters using the provided losses</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>losses</strong> (<em>dict</em>) – A dictionary of losses to be optimized. Should be located in the
+<cite>self.log.losses</cite> attribute of whatever model you are working with.</p></li>
+<li><p><strong>grad_clip</strong> (<em>float</em><em>, </em><em>optional</em>) – The maximum gradient magnitude to clip to. RNNs sometimes have issues
+with exploding gradients, this is a way to prevent them.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="lib.models.core.BaseSequentialModel.update_hidden">
 <span class="sig-name descname"><span class="pre">update_hidden</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.core.BaseSequentialModel.update_hidden" title="Permalink to this definition">¶</a></dt>
 <dd><p>Single step update of the hidden unit in the reconstruction decoder</p>

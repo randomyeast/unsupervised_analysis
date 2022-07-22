@@ -7,4 +7,5 @@ Test nested module documentation
    :maxdepth: 4
 
    distributions
-   models 
+   models
+   util 

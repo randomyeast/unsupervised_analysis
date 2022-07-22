@@ -51,6 +51,8 @@
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
@@ -64,7 +66,11 @@
       <ul>
         <li><a href="tvae.html#lib.models.tvae.core.TVAE.__init__">(lib.models.tvae.core.TVAE method)</a>
 </li>
+        <li><a href="tvae.html#lib.models.tvae.decoder.TVAEDecoder.__init__">(lib.models.tvae.decoder.TVAEDecoder method)</a>
+</li>
         <li><a href="tvae.html#lib.models.tvae.encoder.TVAEEncoder.__init__">(lib.models.tvae.encoder.TVAEEncoder method)</a>
+</li>
+        <li><a href="datasets.html#lib.util.datasets.core.TrajectoryDataset.__init__">(lib.util.datasets.core.TrajectoryDataset method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -81,10 +87,12 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="tvae.html#lib.models.tvae.core.TVAE.decoder">decoder (lib.models.tvae.core.TVAE attribute)</a>
+      <li><a href="tvae.html#lib.models.tvae.decoder.TVAEDecoder.decode_action">decode_action() (lib.models.tvae.decoder.TVAEDecoder method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tvae.html#lib.models.tvae.core.TVAE.decoder">decoder (lib.models.tvae.core.TVAE attribute)</a>
+</li>
       <li><a href="distributions.html#lib.distributions.core.Distribution">Distribution (class in lib.distributions.core)</a>
 </li>
   </ul></td>
@@ -104,6 +112,8 @@
       <li><a href="tvae.html#lib.models.tvae.core.TVAE.forward">forward() (lib.models.tvae.core.TVAE method)</a>
 
       <ul>
+        <li><a href="tvae.html#lib.models.tvae.decoder.TVAEDecoder.forward">(lib.models.tvae.decoder.TVAEDecoder method)</a>
+</li>
         <li><a href="tvae.html#lib.models.tvae.encoder.TVAEEncoder.forward">(lib.models.tvae.encoder.TVAEEncoder method)</a>
 </li>
       </ul></li>
@@ -150,8 +160,6 @@
         <li><a href="models.html#module-lib.models.core">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     lib.models.tvae.core
 
@@ -159,11 +167,34 @@
         <li><a href="tvae.html#module-lib.models.tvae.core">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    lib.models.tvae.decoder
+
+      <ul>
+        <li><a href="tvae.html#module-lib.models.tvae.decoder">module</a>
+</li>
+      </ul></li>
       <li>
     lib.models.tvae.encoder
 
       <ul>
         <li><a href="tvae.html#module-lib.models.tvae.encoder">module</a>
+</li>
+      </ul></li>
+      <li>
+    lib.util.datasets.core
+
+      <ul>
+        <li><a href="datasets.html#module-lib.util.datasets.core">module</a>
+</li>
+      </ul></li>
+      <li>
+    lib.util.datasets.random_trajectories
+
+      <ul>
+        <li><a href="random_trajectories.html#module-lib.util.datasets.random_trajectories">module</a>
 </li>
       </ul></li>
       <li><a href="distributions.html#lib.distributions.normal.Normal.log_prob">log_prob() (lib.distributions.normal.Normal method)</a>
@@ -188,7 +219,13 @@
 </li>
         <li><a href="tvae.html#module-lib.models.tvae.core">lib.models.tvae.core</a>
 </li>
+        <li><a href="tvae.html#module-lib.models.tvae.decoder">lib.models.tvae.decoder</a>
+</li>
         <li><a href="tvae.html#module-lib.models.tvae.encoder">lib.models.tvae.encoder</a>
+</li>
+        <li><a href="datasets.html#module-lib.util.datasets.core">lib.util.datasets.core</a>
+</li>
+        <li><a href="random_trajectories.html#module-lib.util.datasets.random_trajectories">lib.util.datasets.random_trajectories</a>
 </li>
         <li><a href="test.html#module-test">test</a>
 </li>
@@ -204,6 +241,26 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models.html#lib.models.core.BaseSequentialModel.num_parameters">num_parameters (lib.models.core.BaseSequentialModel property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models.html#lib.models.core.BaseSequentialModel.optimize">optimize() (lib.models.core.BaseSequentialModel method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tvae.html#lib.models.tvae.core.TVAE.reconstruct">reconstruct() (lib.models.tvae.core.TVAE method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tvae.html#lib.models.tvae.decoder.TVAEDecoder.reset_policy">reset_policy() (lib.models.tvae.decoder.TVAEDecoder method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -226,9 +283,13 @@
         <li><a href="test.html#module-test">module</a>
 </li>
       </ul></li>
+      <li><a href="datasets.html#lib.util.datasets.core.TrajectoryDataset">TrajectoryDataset (class in lib.util.datasets.core)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tvae.html#lib.models.tvae.core.TVAE">TVAE (class in lib.models.tvae.core)</a>
+</li>
+      <li><a href="tvae.html#lib.models.tvae.decoder.TVAEDecoder">TVAEDecoder (class in lib.models.tvae.decoder)</a>
 </li>
       <li><a href="tvae.html#lib.models.tvae.encoder.TVAEEncoder">TVAEEncoder (class in lib.models.tvae.encoder)</a>
 </li>
