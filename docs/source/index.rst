@@ -71,6 +71,14 @@ Setting up a new experiment
                         for and explanation of different stages of training is in the
                         documentation for each model. 
 
+++++++++++++++++++++++++
+Structuring your folders
+++++++++++++++++++++++++
+*       In all likelihood, you are learning representations of video data. It will be easiest
+        to adapt the existing code and structure the outputs of the model, if you make a 
+        root directory with sub folders for each video. The model training code does not 
+        require this structure, but the code for generating embeddings and reconstruction does.
+
 
 +++++++++++++++++++++++++++++
 Creating a new dataset object
@@ -111,18 +119,21 @@ Training the model
         ``best.pt`` which will be the checkpoint with the lowest negative-log-likelihood
         on the evaluation set for that stage.
 
++++++++++++++++++++++++++++++++++++++++++
+Generating reconstructions (not done yet)
++++++++++++++++++++++++++++++++++++++++++
+-       Running ``python reconstruct.py --config_dir ./experiments/<your_experiment_name>`` will
+        generate reconstructions for all videos in your ``root_data_dir`` specified
+        in ``data_config`` and outputs them to their respective folders.
 
-++++++++++++++++++++++++++++
-Evaluating model performance
-++++++++++++++++++++++++++++
--       Running ``python eval.py --config_dir ./experiments/<your_experiment_name>`` will
-        compute the mean squared error of reconstructing the entire dataset using the model
-        with the lowest evaluation loss from the latest stage.
- 
-
-+++++++++++++++++++++
-Generating embeddings
-+++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++
+Generating embeddings using the TVAE (not done yet)
++++++++++++++++++++++++++++++++++++++++++++++++++++
+-       Running ``python embed.py --config_dir ./experiments/<your_experiment_name>`` will
+        generate embeddings for all videos in your ``root_data_dir`` specified in
+        ``data_config`` and outputs them to their respective folders. All of the models 
+        currently supported are VAE based and the embeddings are the mean of the inferred
+        posterior distribution.
 
 ++++++++++++++++++++++
 TREBA quickstart guide

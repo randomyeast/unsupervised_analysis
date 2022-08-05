@@ -75,31 +75,50 @@ details.</p></li>
 <ul class="simple">
 <li><p>To setup the directory structure for a new experiment, in the terminal
 type <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">setup.bash</span> <span class="pre">&lt;your_new_project_name&gt;</span></code>, replacing <code class="docutils literal notranslate"><span class="pre">&lt;your_new_project_name&gt;</span></code>
-with the name of your new project.</p></li>
+with the name of your new project.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">./experiments/&lt;your_new_project_name&gt;/checkpoints</span></code> will be where the
+model checkpoints will be store.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">./experiments/&lt;your_new_project_name/log</span></code> will be where the log used
+to visualize the loss in tensorboard will be stored.</p></li>
+</ul>
+</li>
 <li><p>Next, you should create a copy of the template configuration file available in
 <code class="docutils literal notranslate"><span class="pre">./experiments/example_tvae/config.json</span></code> and add the copy to
 <code class="docutils literal notranslate"><span class="pre">./experiments/&lt;your_new_project_name/</span></code>. The <code class="docutils literal notranslate"><span class="pre">config.json</span></code> has three dictionaries
 within it:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">data_config</span></code>: this is passed to the instantiation of a new dataset object
+<li><p><code class="docutils literal notranslate"><span class="pre">data_config</span></code>: This is passed to the instantiation of a new dataset object
 which will be explained in the next step. Any additional parameters needed
-for loading and preprocessing data should be added here</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">model_config</span></code>: this is used to pick the model architecture being used e.g.
-<code class="docutils literal notranslate"><span class="pre">TVAE</span></code> in the example configuration and to configure the dimensions of the
-different layers in the model. For additional information on what the different
-keys represent, check the model documentation</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">train_config</span></code>: Thi</p></li>
+for loading and preprocessing data should be added here. After you create
+a new dataset object in the next step, you will need to change the <code class="docutils literal notranslate"><span class="pre">name</span></code>
+parameter here to reflect the new dataset object you created.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">model_config</span></code>: This is used to pick the model architecture being used (e.g.
+<code class="docutils literal notranslate"><span class="pre">TVAE</span></code> in the example configuration) and to configure the dimensions of the
+different layers in the model. If you’re creating a new dataset object, the
+main parameter you should update here is <code class="docutils literal notranslate"><span class="pre">state_dim</span></code> which represents the
+dimensionality of each frame of each trajectory in the inputs. For additional
+information on what the different keys represent, check the model documentation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">train_config</span></code>: This is used to configure training parameters such as the
+batch size, device to use for training, how many epochs etc.</p>
+<ul>
+<li><p>One important thing to recognize is that <code class="docutils literal notranslate"><span class="pre">num_epochs</span></code> is a list.
+This is because some models use staged training. The current support
+for and explanation of different stages of training is in the
+documentation for each model.</p></li>
 </ul>
 </li>
 </ul>
+</li>
+</ul>
+</section>
+<section id="structuring-your-folders">
+<h2>Structuring your folders<a class="headerlink" href="#structuring-your-folders" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>VOnce you’ve made the new dataset object, copy <code class="docutils literal notranslate"><span class="pre">./experiments/example_tvae/</span></code> to
-<code class="docutils literal notranslate"><span class="pre">./experiments/&lt;your_new_project_name&gt;</span></code>.</p></li>
-<li><p>Update the <code class="docutils literal notranslate"><span class="pre">state_dim</span></code> parameter of the copied <code class="docutils literal notranslate"><span class="pre">config.json</span></code> file so that it
-reflects the number of features in each frame of each trajectory (<code class="docutils literal notranslate"><span class="pre">feature_dim</span></code>
-in the output of <code class="docutils literal notranslate"><span class="pre">load_data</span></code>)</p></li>
-<li><p>Change the name of the dataset in the configuration file to reflect the name of
-the new dataset object you made.</p></li>
+<li><p>In all likelihood, you are learning representations of video data. It will be easiest
+to adapt the existing code and structure the outputs of the model, if you make a
+root directory with sub folders for each video. The model training code does not
+require this structure, but the code for generating embeddings and reconstruction does.</p></li>
 </ul>
 </section>
 <section id="creating-a-new-dataset-object">
@@ -118,11 +137,15 @@ embedding and should return a <code class="docutils literal notranslate"><span c
 shape <code class="docutils literal notranslate"><span class="pre">[num_trajs,</span> <span class="pre">traj_len,</span> <span class="pre">num_features]</span></code></p></li>
 <li><p>Any paths to files storing data can be passed to <code class="docutils literal notranslate"><span class="pre">load_data</span></code> using
 the <code class="docutils literal notranslate"><span class="pre">data_config</span></code> dictionary in <code class="docutils literal notranslate"><span class="pre">config.json</span></code> in
-your experiment folder. The <a class="reference internal" href="mouse_v1.html#lib.util.datasets.mouse_v1.core.MouseV1Dataset" title="lib.util.datasets.mouse_v1.core.MouseV1Dataset"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MouseV1Dataset</span></code></a> object expects a key called <code class="docutils literal notranslate"><span class="pre">root_data_dir</span></code> to be in <code class="docutils literal notranslate"><span class="pre">data_config</span></code>.</p></li>
+your experiment folder. For example,
+<a class="reference internal" href="mouse_v1.html#lib.util.datasets.mouse_v1.core.MouseV1Dataset" title="lib.util.datasets.mouse_v1.core.MouseV1Dataset"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MouseV1Dataset</span></code></a>
+object expects a key called <code class="docutils literal notranslate"><span class="pre">root_data_dir</span></code> to be in <code class="docutils literal notranslate"><span class="pre">data_config</span></code>.</p></li>
 </ul>
 </li>
 <li><p>The second method you need to override is <code class="docutils literal notranslate"><span class="pre">preprocess(data_config,</span> <span class="pre">trajectories)</span></code>.
-This is where you will do any preprocessing of the data loaded in via <code class="docutils literal notranslate"><span class="pre">load_data</span></code>.</p></li>
+This is where you will do any preprocessing of the data loaded in via <code class="docutils literal notranslate"><span class="pre">load_data</span></code>.
+This function must also return a <code class="docutils literal notranslate"><span class="pre">np.array</span></code> or <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code> of the shape
+<code class="docutils literal notranslate"><span class="pre">[num_trajs,</span> <span class="pre">traj_len,</span> <span class="pre">num_features]</span></code>.</p></li>
 </ul>
 </section>
 <section id="training-the-model">
@@ -138,16 +161,23 @@ training you have. Within each of these directories, there will be a file called
 on the evaluation set for that stage.</p></li>
 </ul>
 </section>
-<section id="evaluating-model-performance">
-<h2>Evaluating model performance<a class="headerlink" href="#evaluating-model-performance" title="Permalink to this heading">¶</a></h2>
+<section id="generating-reconstructions-not-done-yet">
+<h2>Generating reconstructions (not done yet)<a class="headerlink" href="#generating-reconstructions-not-done-yet" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Running <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">eval.py</span> <span class="pre">--config_dir</span> <span class="pre">./experiments/&lt;your_experiment_name&gt;</span></code> will
-compute the mean squared error of reconstructing the entire dataset using the model
-with the lowest evaluation loss from the latest stage.</p></li>
+<li><p>Running <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">reconstruct.py</span> <span class="pre">--config_dir</span> <span class="pre">./experiments/&lt;your_experiment_name&gt;</span></code> will
+generate reconstructions for all videos in your <code class="docutils literal notranslate"><span class="pre">root_data_dir</span></code> specified
+in <code class="docutils literal notranslate"><span class="pre">data_config</span></code> and outputs them to their respective folders.</p></li>
 </ul>
 </section>
-<section id="generating-embeddings">
-<h2>Generating embeddings<a class="headerlink" href="#generating-embeddings" title="Permalink to this heading">¶</a></h2>
+<section id="generating-embeddings-using-the-tvae-not-done-yet">
+<h2>Generating embeddings using the TVAE (not done yet)<a class="headerlink" href="#generating-embeddings-using-the-tvae-not-done-yet" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Running <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">embed.py</span> <span class="pre">--config_dir</span> <span class="pre">./experiments/&lt;your_experiment_name&gt;</span></code> will
+generate embeddings for all videos in your <code class="docutils literal notranslate"><span class="pre">root_data_dir</span></code> specified in
+<code class="docutils literal notranslate"><span class="pre">data_config</span></code> and outputs them to their respective folders. All of the models
+currently supported are VAE based and the embeddings are the mean of the inferred
+posterior distribution.</p></li>
+</ul>
 </section>
 <section id="treba-quickstart-guide">
 <h2>TREBA quickstart guide<a class="headerlink" href="#treba-quickstart-guide" title="Permalink to this heading">¶</a></h2>
@@ -213,10 +243,11 @@ with the lowest evaluation loss from the latest stage.</p></li>
 </li>
 <li><a class="reference internal" href="#quickstart-guide">Quickstart guide</a><ul>
 <li><a class="reference internal" href="#setting-up-a-new-experiment">Setting up a new experiment</a></li>
+<li><a class="reference internal" href="#structuring-your-folders">Structuring your folders</a></li>
 <li><a class="reference internal" href="#creating-a-new-dataset-object">Creating a new dataset object</a></li>
 <li><a class="reference internal" href="#training-the-model">Training the model</a></li>
-<li><a class="reference internal" href="#evaluating-model-performance">Evaluating model performance</a></li>
-<li><a class="reference internal" href="#generating-embeddings">Generating embeddings</a></li>
+<li><a class="reference internal" href="#generating-reconstructions-not-done-yet">Generating reconstructions (not done yet)</a></li>
+<li><a class="reference internal" href="#generating-embeddings-using-the-tvae-not-done-yet">Generating embeddings using the TVAE (not done yet)</a></li>
 <li><a class="reference internal" href="#treba-quickstart-guide">TREBA quickstart guide</a></li>
 <li><a class="reference internal" href="#vq-treba-quickstart-guide">VQ-TREBA quickstart guide</a></li>
 <li><a class="reference internal" href="#module-documentation">Module documentation</a></li>
