@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>lib.distributions &#8212; Kennedy lab unsupervised analysis tools 0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
@@ -14,6 +14,7 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
@@ -49,7 +50,7 @@
           <div class="body" role="main">
             
   <section id="lib-distributions">
-<h1>lib.distributions<a class="headerlink" href="#lib-distributions" title="Permalink to this headline">¶</a></h1>
+<h1>lib.distributions<a class="headerlink" href="#lib-distributions" title="Permalink to this heading">¶</a></h1>
 <p>If you are interested in using any additional distribution
 types, add them as modules to <cite>lib.distributions</cite>.</p>
 <span class="target" id="module-lib.distributions.core"></span><dl class="py class">
@@ -73,7 +74,7 @@ we are using the inferred log-variance output by the encoder.</p>
 \[\frac{\sigma_1}{\sigma_{2}} + \frac{\sigma_{1}^2+(\mu_1 -
 \mu_2)^{2}}{2\sigma^{2}_{2}}\]</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>normal_1</strong> (<a class="reference internal" href="#lib.distributions.normal.Normal" title="lib.distributions.normal.Normal"><em>Normal</em></a>) – The first Gaussian in the equation above</p></li>
 <li><p><strong>normal_2</strong> (<a class="reference internal" href="#lib.distributions.normal.Normal" title="lib.distributions.normal.Normal"><em>Normal</em></a><em>, </em><em>optional</em>) – The second Gaussian in the equation above. If not included,assumed
@@ -84,10 +85,10 @@ collapsing into the unit Gaussian prior. If the KLD falls below
 assigned to be <cite>free_bits</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>kld</strong> – the Kullback-Leibler divergence of <cite>normal_1</cite> from <cite>normal_2</cite>.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.tensor</p>
 </dd>
 </dl>
@@ -106,14 +107,14 @@ standard deviation.</p>
 \[\ln[\sigma] + \frac{1}{2}\ln[2\pi] +
 \frac{(x-\mu)^{2}}{2\sigma^{2}}\]</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>value</strong> (<em>torch.tensor</em>) – The value (potentially multi-dimensional) we are computing the NLL
 of.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>nll</strong> – the sum of the nll computed for each dimension of <cite>value</cite>.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.tensor</p>
 </dd>
 </dl>
@@ -131,13 +132,13 @@ is computed from that:</p>
 <div class="math notranslate nohighlight">
 \[z = \mu + \epsilon \cdot \sigma \cdot T\]</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>temperature</strong> (<em>float</em><em>, </em><em>optional</em>) – Additional scaling parameter for variance of the distribution.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>z</strong> – the Gaussian distributed sample computed using the equation above.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.tensor</p>
 </dd>
 </dl>
@@ -180,7 +181,7 @@ is computed from that:</p>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -207,7 +208,7 @@ is computed from that:</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Andrew Ulmer (adapted from Jennifer J. Sun).
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
     </div>
   </body>
 </html>

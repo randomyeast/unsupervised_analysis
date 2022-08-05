@@ -5,56 +5,12 @@ import torch.nn as nn
 from lib.distributions import Normal
 
 class TVAEDecoder(nn.Module):
+    r"""Detailed explanation available :doc:`here <tvae_decoder_explanation>`"""
 
     # TODO: Define the default model parameters
     
     def __init__(self, log, **kwargs):
         r"""Defines the decoder network architecture
-
-        .. _recurrent-decoder:
-        .. image:: images/decoder.png
-            :align: center
-
-        Notes
-        ===== 
-            **Recurrent portion of decoder**
-
-            *   The recurrent portion of the decoder is similar to the
-                recurrent portion of the encoder but instead of using
-                a state and an action as inputs at each timestep (shown
-                in `recurrent-encoder`_), it uses a state and the latent
-                variable z as shown in `recurrent-decoder`_.  
-
-            **Fully connected portion of decoder**
-
-            *   The output of the last recurrent unit at each timestep,
-                the state corresponding to the current timestep, and the
-                latent variable z are concatenated and fed into a fully
-                connected layer ``dec_action_fc``.
-                
-            *   The output of ``dec_action_fc`` at each time step is fed
-                into two separate fully connected layers ``dec_action_mean``
-                and ``dec_action_logvar`` to generate the mean and log 
-                variance of a distribution of actions, denoted above as
-                :math:`\pi`.
-
-            *   The reconstruction loss at each time step is computed as
-                the negative log likelihood of the true action :math:`a_{t}`
-                under the predicted distribution of actions :math:`\pi`. The
-                calculation is explained in more detail in Normal 
-
-            **Decoder variations**
-
-            *   The default setting of the model is for ``teacher_force``
-                to be ``False``. This means that the decoder will use an
-                action sampled from the predicted distribution of actions
-                at each timestep to *rollout* the trajectory used when
-                computing the reconstruction loss. This process is shown in 
-                `recurrent-decoder`_ as :math:`\tilde{s_{t}} = \tilde{s_{t-1}} + \tilde{a_{t-1}}`.
-
-            *   If ``teacher_force`` is ``True``, the decoder will use the
-                true state as the input to the recurrent unit at the next
-                time step.
 
         Parameters
         ========== 
@@ -106,7 +62,7 @@ class TVAEDecoder(nn.Module):
         self.dec_action_logvar = nn.Linear(self.h_dim, self.state_dim)
 
 
-    def forward(self, states, z, reconstruct=False):
+    def forward(self, states, z):
         """Computes a reconstruction of the input states using an initial
         state and a sample from the posterior distribution. The negative
         log likelihood of the true actions under the predicted distribution
@@ -129,34 +85,47 @@ class TVAEDecoder(nn.Module):
         # Compute actions
         actions = states[1:] - states[:-1]
 
-        # Iterate through state reconstruction
-        curr_state, curr_action = states[0], actions[0]
-        reconstruction = [curr_state]
+        # Compute the reconstruction loss
         for t in range(actions.size(0)):
-            # Compute distribution of actions
-            action_likelihood = self.decode_action(curr_state)
+            action_likelihood = self.decode_action(states[t])
+            self.log.losses['nll'] -= action_likelihood.log_prob(actions[t])
+            self.update_hidden_state(states[t], actions[t])
 
-            # Compute the nll of the true action under the predicted distribution
-            self.log.losses['nll'] -= action_likelihood.log_prob(curr_action)
+    def generate_rollout(self, states, z):
+        """
+        Successively rolls out a trajectory using the previous state and an
+        action sampled from a predicted distribution, given the previous state
+        and the latent variable z
 
-            # Update hidden state in recurrent portion of decoder
-            self.update_hidden_state(curr_state, curr_action)
+        Parameters
+        ----------
+        states : torch.Tensor
+            A tensor of shape ``[trajectory_length, batch_size, state_dim]``
+            representing the true states we are trying to replicate
+        z: torch.Tensor
+            A tensor of shape ``[batch_size, z_dim]`` representing latent variables
+            z sampled from the inferred posterior distribution.
 
-            # Update state and action
-            if hasattr(self, "teacher_force") and self.teacher_force:
-                curr_state, curr_action = states[t+1], actions[t+1]
-            # Use rollout procedure to succesively synthesize states
-            else:
-                curr_action = action_likelihood.sample()
-                curr_state = curr_state + curr_action
+        Returns
+        -------
+        nll : torch.tensor
+            The negative-log-likelihood computed for the rolled out trajectory
+        recon: torch.tensor
+            The reconstructed trajectory       
+        """
+        self.reset_policy(z)
+        recon = [states[0]]
+        actions = states[1:] - states[:-1]
+        nll = 0
+        for t in range(actions.size(0)):
+            action_likelihood = self.decode_action(recon[-1]) 
+            nll -= action_likelihood.log_prob(actions[t])
+            curr_action = action_likelihood.sample()
+            recon.append(recon[-1] + curr_action)
+            self.update_hidden_state(recon[-1], curr_action)
 
-            # If we're reconstructing, save the current state 
-            if reconstruct:
-                reconstruction.append(curr_state)
-
-        if reconstruct:
-            return torch.stack(reconstruction)
-
+        return nll, torch.stack(recon)
+         
     def decode_action(self, state):
         """
         Computes the pass through the fully connected layers of the decoder
@@ -190,6 +159,12 @@ class TVAEDecoder(nn.Module):
         Initializes the hidden state of the decoder to be all zeros
         and sets the temperature and latent variable z as attributes
         of the model
+
+        Parameters
+        ----------
+        z: torch.Tensor
+            A tensor of shape ``[batch_size, state_dim]`` representing the
+            the sample from the inferred posterior
         """
         # Set internal variables
         self.z = z
@@ -201,9 +176,24 @@ class TVAEDecoder(nn.Module):
         ).to(z.device)
 
     def init_hidden_state(self, batch_size):
+        """Returns a tensor of the correct shape used to initialize the RNN"""
         return torch.zeros(self.num_layers, batch_size, self.rnn_dim)
 
     def update_hidden_state(self, state, action):
+        """Executes a forward pass through the recurrent unit at the current time step
+        
+        Parameters
+        ----------
+        state: torch.Tensor
+            State from the current time step
+        action: torch.Tensor
+            Action used to produce the state at the current time step
+
+        Returns
+        -------
+        hiddens: torch.tensor
+            Output of recurrent portion of the decoder at the current time step
+        """
         state_action_pair = torch.cat([state, action], dim=1).unsqueeze(0)
         hiddens, self.hidden = self.dec_birnn(state_action_pair, self.hidden)
 

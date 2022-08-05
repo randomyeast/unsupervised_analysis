@@ -1,0 +1,29 @@
+
+{
+    "data_config": {
+        "root_data_dir": "/home/andrewulmer/data/parker_lab/balanced/",
+        "dataset_type": "mouse_v1",
+        "traj_len": 20
+    },
+    "model_config": {
+        "model_type": "TVAE",
+        "requires_labels": false,
+        "recurrent_dim": 256,
+        "rnn_dim": 256,
+        "num_layers": 1,
+        "state_dim": 9,
+        "z_dim": 32,
+        "h_dim": 256,
+        "final_hidden": false
+    },
+    "train_config": {
+        "num_epochs": [20, 20],
+        "batch_size": 512,
+        "checkpoint_frequency": 2,
+        "device": "cuda"
+    },
+    "eval_config": {
+        "device": "cpu",
+        "batch_size": 512
+    }
+}

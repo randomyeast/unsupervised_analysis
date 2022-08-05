@@ -1,12 +1,12 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>Welcome to Kennedy lab unsupervised analysis tools’s documentation! &#8212; Kennedy lab unsupervised analysis tools 0.0 documentation</title>
+    <title>Welcome to the documentation for the Kennedy lab’s unsupervised analysis tools! &#8212; Kennedy lab unsupervised analysis tools 0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/classic.css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -14,6 +14,7 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
@@ -33,7 +34,7 @@
           <a href="lib.html" title="vq-triplet-treba.lib"
              accesskey="N">next</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">Kennedy lab unsupervised analysis tools 0.0 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Welcome to Kennedy lab unsupervised analysis tools’s documentation!</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Welcome to the documentation for the Kennedy lab’s unsupervised analysis tools!</a></li> 
       </ul>
     </div>  
 
@@ -42,36 +43,141 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="welcome-to-kennedy-lab-unsupervised-analysis-tools-s-documentation">
-<h1>Welcome to Kennedy lab unsupervised analysis tools’s documentation!<a class="headerlink" href="#welcome-to-kennedy-lab-unsupervised-analysis-tools-s-documentation" title="Permalink to this headline">¶</a></h1>
-<section id="tvae-quickstart-guide">
-<h2>TVAE Quickstart Guide<a class="headerlink" href="#tvae-quickstart-guide" title="Permalink to this headline">¶</a></h2>
+  <section id="welcome-to-the-documentation-for-the-kennedy-lab-s-unsupervised-analysis-tools">
+<h1>Welcome to the documentation for the Kennedy lab’s unsupervised analysis tools!<a class="headerlink" href="#welcome-to-the-documentation-for-the-kennedy-lab-s-unsupervised-analysis-tools" title="Permalink to this heading">¶</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>To train the model on a new dataset, you first need to create
-a dataset object that inherits from the base module
-<a class="reference internal" href="datasets.html#lib.util.datasets.core.TrajectoryDataset" title="lib.util.datasets.core.TrajectoryDataset"><code class="xref py py-mod docutils literal notranslate"><span class="pre">TrajectoryDataset</span></code></a>.
-An trivial example of this can be found in</p></li>
+<li><p>These pages contain documentation relevant for unsupervised
+analysis methods used in Ann Kennedy’s lab at Northwestern
+University.</p></li>
+<li><p>There are currently three models available for use: the
+Trajectory Variational Autoencoder (TVAE), TREBA, and Vector
+Quantized TREBA with triplet loss (VQ-TREBA).</p></li>
+<li><p>To generate clusters corresponding to behavioral motifs,
+the TVAE and TREBA both require some post-hoc clustering
+of the generated embeddings and VQ-TREBA does not.</p></li>
+<li><p>The goal of this documentation is both to explain how each
+model variant works and make it as easy as possible to adapt
+the models to work on new datasets.</p></li>
+<li><p>The documentation for each model is split up into a concise
+reference document, meant for those implementing / modifying
+the models, as well as a section with more explicit mathematical
+details.</p></li>
+<li><p>Any suggestions are more than welcome.</p></li>
 </ul>
 </section>
+</section>
+<section id="quickstart-guide">
+<h1>Quickstart guide<a class="headerlink" href="#quickstart-guide" title="Permalink to this heading">¶</a></h1>
+<section id="setting-up-a-new-experiment">
+<h2>Setting up a new experiment<a class="headerlink" href="#setting-up-a-new-experiment" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>To setup the directory structure for a new experiment, in the terminal
+type <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">setup.bash</span> <span class="pre">&lt;your_new_project_name&gt;</span></code>, replacing <code class="docutils literal notranslate"><span class="pre">&lt;your_new_project_name&gt;</span></code>
+with the name of your new project.</p></li>
+<li><p>Next, you should create a copy of the template configuration file available in
+<code class="docutils literal notranslate"><span class="pre">./experiments/example_tvae/config.json</span></code> and add the copy to
+<code class="docutils literal notranslate"><span class="pre">./experiments/&lt;your_new_project_name/</span></code>. The <code class="docutils literal notranslate"><span class="pre">config.json</span></code> has three dictionaries
+within it:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_config</span></code>: this is passed to the instantiation of a new dataset object
+which will be explained in the next step. Any additional parameters needed
+for loading and preprocessing data should be added here</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">model_config</span></code>: this is used to pick the model architecture being used e.g.
+<code class="docutils literal notranslate"><span class="pre">TVAE</span></code> in the example configuration and to configure the dimensions of the
+different layers in the model. For additional information on what the different
+keys represent, check the model documentation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">train_config</span></code>: Thi</p></li>
+</ul>
+</li>
+</ul>
+<ul class="simple">
+<li><p>VOnce you’ve made the new dataset object, copy <code class="docutils literal notranslate"><span class="pre">./experiments/example_tvae/</span></code> to
+<code class="docutils literal notranslate"><span class="pre">./experiments/&lt;your_new_project_name&gt;</span></code>.</p></li>
+<li><p>Update the <code class="docutils literal notranslate"><span class="pre">state_dim</span></code> parameter of the copied <code class="docutils literal notranslate"><span class="pre">config.json</span></code> file so that it
+reflects the number of features in each frame of each trajectory (<code class="docutils literal notranslate"><span class="pre">feature_dim</span></code>
+in the output of <code class="docutils literal notranslate"><span class="pre">load_data</span></code>)</p></li>
+<li><p>Change the name of the dataset in the configuration file to reflect the name of
+the new dataset object you made.</p></li>
+</ul>
+</section>
+<section id="creating-a-new-dataset-object">
+<h2>Creating a new dataset object<a class="headerlink" href="#creating-a-new-dataset-object" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>To train any of the model variants, you first need to create
+a new dataset object which inherits from the base module
+<a class="reference internal" href="datasets.html#lib.util.datasets.core.TrajectoryDataset" title="lib.util.datasets.core.TrajectoryDataset"><code class="xref py py-mod docutils literal notranslate"><span class="pre">TrajectoryDataset</span></code></a>.
+An example dataset is available
+<a class="reference internal" href="mouse_v1.html#lib.util.datasets.mouse_v1.core.MouseV1Dataset" title="lib.util.datasets.mouse_v1.core.MouseV1Dataset"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MouseV1Dataset</span></code></a></p></li>
+<li><p>The first method from <a class="reference internal" href="datasets.html#lib.util.datasets.core.TrajectoryDataset" title="lib.util.datasets.core.TrajectoryDataset"><code class="xref py py-mod docutils literal notranslate"><span class="pre">TrajectoryDataset</span></code></a>
+you need to override in your new dataset object is <code class="docutils literal notranslate"><span class="pre">load_data(data_config)</span></code>.</p>
+<ul>
+<li><p>This function is called to load the trajectories you are interested in
+embedding and should return a <code class="docutils literal notranslate"><span class="pre">np.array</span></code> or <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code> of the
+shape <code class="docutils literal notranslate"><span class="pre">[num_trajs,</span> <span class="pre">traj_len,</span> <span class="pre">num_features]</span></code></p></li>
+<li><p>Any paths to files storing data can be passed to <code class="docutils literal notranslate"><span class="pre">load_data</span></code> using
+the <code class="docutils literal notranslate"><span class="pre">data_config</span></code> dictionary in <code class="docutils literal notranslate"><span class="pre">config.json</span></code> in
+your experiment folder. The <a class="reference internal" href="mouse_v1.html#lib.util.datasets.mouse_v1.core.MouseV1Dataset" title="lib.util.datasets.mouse_v1.core.MouseV1Dataset"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MouseV1Dataset</span></code></a> object expects a key called <code class="docutils literal notranslate"><span class="pre">root_data_dir</span></code> to be in <code class="docutils literal notranslate"><span class="pre">data_config</span></code>.</p></li>
+</ul>
+</li>
+<li><p>The second method you need to override is <code class="docutils literal notranslate"><span class="pre">preprocess(data_config,</span> <span class="pre">trajectories)</span></code>.
+This is where you will do any preprocessing of the data loaded in via <code class="docutils literal notranslate"><span class="pre">load_data</span></code>.</p></li>
+</ul>
+</section>
+<section id="training-the-model">
+<h2>Training the model<a class="headerlink" href="#training-the-model" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Running <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">train.py</span> <span class="pre">--config_dir</span> <span class="pre">./experiments/&lt;your_experiment_name&gt;</span></code> will
+train the model. It will likely take several hours to converge, depending on your
+hardware and how much data you are using.</p></li>
+<li><p>Once the model has completed training, there will be a directory titled <code class="docutils literal notranslate"><span class="pre">stage_&lt;x&gt;</span></code>
+within the <code class="docutils literal notranslate"><span class="pre">./experiments/&lt;your_experiment_name&gt;/</span></code> directory, for each stage of
+training you have. Within each of these directories, there will be a file called
+<code class="docutils literal notranslate"><span class="pre">best.pt</span></code> which will be the checkpoint with the lowest negative-log-likelihood
+on the evaluation set for that stage.</p></li>
+</ul>
+</section>
+<section id="evaluating-model-performance">
+<h2>Evaluating model performance<a class="headerlink" href="#evaluating-model-performance" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Running <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">eval.py</span> <span class="pre">--config_dir</span> <span class="pre">./experiments/&lt;your_experiment_name&gt;</span></code> will
+compute the mean squared error of reconstructing the entire dataset using the model
+with the lowest evaluation loss from the latest stage.</p></li>
+</ul>
+</section>
+<section id="generating-embeddings">
+<h2>Generating embeddings<a class="headerlink" href="#generating-embeddings" title="Permalink to this heading">¶</a></h2>
+</section>
 <section id="treba-quickstart-guide">
-<h2>TREBA Quickstart guide<a class="headerlink" href="#treba-quickstart-guide" title="Permalink to this headline">¶</a></h2>
+<h2>TREBA quickstart guide<a class="headerlink" href="#treba-quickstart-guide" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Under construction</p></li>
+</ul>
+</section>
+<section id="vq-treba-quickstart-guide">
+<h2>VQ-TREBA quickstart guide<a class="headerlink" href="#vq-treba-quickstart-guide" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Under construction</p></li>
 </ul>
 </section>
 <section id="module-documentation">
-<h2>Module documentation<a class="headerlink" href="#module-documentation" title="Permalink to this headline">¶</a></h2>
+<h2>Module documentation<a class="headerlink" href="#module-documentation" title="Permalink to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="lib.html">vq-triplet-treba.lib</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="distributions.html">lib.distributions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="models.html">lib.models</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tvae.html">lib.models.tvae</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tvae.html">lib.models.tvae</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tvae_encoder_explanation.html">TVAE encoder explanation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tvae_decoder_explanation.html">TVAE decoder explanation</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="util.html">lib.util</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="datasets.html">lib.util.datasets</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="random_trajectories.html">lib.util.datasets.random_trajectories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mouse_v1.html">lib.util.datasets.mouse_v1</a></li>
 </ul>
 </li>
 </ul>
@@ -83,7 +189,7 @@ An trivial example of this can be found in</p></li>
 </section>
 </section>
 <section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">¶</a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
@@ -101,9 +207,18 @@ An trivial example of this can be found in</p></li>
   <div>
     <h3><a href="#">Table of Contents</a></h3>
     <ul>
-<li><a class="reference internal" href="#">Welcome to Kennedy lab unsupervised analysis tools’s documentation!</a><ul>
-<li><a class="reference internal" href="#tvae-quickstart-guide">TVAE Quickstart Guide</a></li>
-<li><a class="reference internal" href="#treba-quickstart-guide">TREBA Quickstart guide</a></li>
+<li><a class="reference internal" href="#">Welcome to the documentation for the Kennedy lab’s unsupervised analysis tools!</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#quickstart-guide">Quickstart guide</a><ul>
+<li><a class="reference internal" href="#setting-up-a-new-experiment">Setting up a new experiment</a></li>
+<li><a class="reference internal" href="#creating-a-new-dataset-object">Creating a new dataset object</a></li>
+<li><a class="reference internal" href="#training-the-model">Training the model</a></li>
+<li><a class="reference internal" href="#evaluating-model-performance">Evaluating model performance</a></li>
+<li><a class="reference internal" href="#generating-embeddings">Generating embeddings</a></li>
+<li><a class="reference internal" href="#treba-quickstart-guide">TREBA quickstart guide</a></li>
+<li><a class="reference internal" href="#vq-treba-quickstart-guide">VQ-TREBA quickstart guide</a></li>
 <li><a class="reference internal" href="#module-documentation">Module documentation</a></li>
 </ul>
 </li>
@@ -132,7 +247,7 @@ An trivial example of this can be found in</p></li>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -150,12 +265,12 @@ An trivial example of this can be found in</p></li>
           <a href="lib.html" title="vq-triplet-treba.lib"
              >next</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">Kennedy lab unsupervised analysis tools 0.0 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Welcome to Kennedy lab unsupervised analysis tools’s documentation!</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Welcome to the documentation for the Kennedy lab’s unsupervised analysis tools!</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Andrew Ulmer (adapted from Jennifer J. Sun).
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
     </div>
   </body>
 </html>

@@ -3,22 +3,123 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Kennedy lab unsupervised analysis tools's documentation!
-===================================================================
+Welcome to the documentation for the Kennedy lab's unsupervised analysis tools!
+===============================================================================
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-TVAE Quickstart Guide
+Overview
 ++++++++++++++++++++++++++++++++++++++++++++++++++
+-       These pages contain documentation relevant for unsupervised
+        analysis methods used in Ann Kennedy's lab at Northwestern
+        University.
+-       There are currently three models available for use: the
+        Trajectory Variational Autoencoder (TVAE), TREBA, and Vector
+        Quantized TREBA with triplet loss (VQ-TREBA).
+-       To generate clusters corresponding to behavioral motifs,
+        the TVAE and TREBA both require some post-hoc clustering
+        of the generated embeddings and VQ-TREBA does not.
+-       The goal of this documentation is both to explain how each
+        model variant works and make it as easy as possible to adapt
+        the models to work on new datasets.
+-       The documentation for each model is split up into a concise
+        reference document, meant for those implementing / modifying
+        the models, as well as a section with more explicit mathematical
+        details.
+-       Any suggestions are more than welcome.
 
--       To train the model on a new dataset, you first need to create
-        a dataset object that inherits from the base module
+
+Quickstart guide
+==================================================
+
++++++++++++++++++++++++++++
+Setting up a new experiment
++++++++++++++++++++++++++++
+
+*       To setup the directory structure for a new experiment, in the terminal
+        type ``bash setup.bash <your_new_project_name>``, replacing ``<your_new_project_name>``
+        with the name of your new project.
+*       Next, you should create a copy of the template configuration file available in
+        ``./experiments/example_tvae/config.json`` and add the copy to 
+        ``./experiments/<your_new_project_name/``. The ``config.json`` has three dictionaries
+        within it:
+        
+        *       ``data_config``: this is passed to the instantiation of a new dataset object
+                which will be explained in the next step. Any additional parameters needed
+                for loading and preprocessing data should be added here
+
+        *       ``model_config``: this is used to pick the model architecture being used e.g.
+                ``TVAE`` in the example configuration and to configure the dimensions of the
+                different layers in the model. For additional information on what the different
+                keys represent, check the model documentation
+
+        *       ``train_config``: Thi
+
+
+-       VOnce you've made the new dataset object, copy ``./experiments/example_tvae/`` to
+        ``./experiments/<your_new_project_name>``.
+-       Update the ``state_dim`` parameter of the copied ``config.json`` file so that it
+        reflects the number of features in each frame of each trajectory (``feature_dim``
+        in the output of ``load_data``)
+-       Change the name of the dataset in the configuration file to reflect the name of
+        the new dataset object you made.
+
++++++++++++++++++++++++++++++
+Creating a new dataset object
++++++++++++++++++++++++++++++
+
+*       To train any of the model variants, you first need to create
+        a new dataset object which inherits from the base module 
         :mod:`TrajectoryDataset <lib.util.datasets.core.TrajectoryDataset>`.
-        An trivial example of this can be found in  
+        An example dataset is available 
+        :mod:`MouseV1Dataset <lib.util.datasets.mouse_v1.core.MouseV1Dataset>`
+*       The first method from :mod:`TrajectoryDataset <lib.util.datasets.core.TrajectoryDataset>`
+        you need to override in your new dataset object is ``load_data(data_config)``.
+
+        *       This function is called to load the trajectories you are interested in 
+                embedding and should return a ``np.array`` or ``torch.tensor`` of the
+                shape ``[num_trajs, traj_len, num_features]``
+        
+        *       Any paths to files storing data can be passed to ``load_data`` using
+                the ``data_config`` dictionary in ``config.json`` in 
+                your experiment folder. The :mod:`MouseV1Dataset <lib.util.datasets.mouse_v1.core.MouseV1Dataset>` object expects a key called ``root_data_dir`` to be in ``data_config``. 
+
+*       The second method you need to override is ``preprocess(data_config, trajectories)``.
+        This is where you will do any preprocessing of the data loaded in via ``load_data``. 
+
+++++++++++++++++++
+Training the model
+++++++++++++++++++
+-       Running ``python train.py --config_dir ./experiments/<your_experiment_name>`` will
+        train the model. It will likely take several hours to converge, depending on your
+        hardware and how much data you are using.
+-       Once the model has completed training, there will be a directory titled ``stage_<x>``
+        within the ``./experiments/<your_experiment_name>/`` directory, for each stage of 
+        training you have. Within each of these directories, there will be a file called
+        ``best.pt`` which will be the checkpoint with the lowest negative-log-likelihood
+        on the evaluation set for that stage.
 
 
+++++++++++++++++++++++++++++
+Evaluating model performance
+++++++++++++++++++++++++++++
+-       Running ``python eval.py --config_dir ./experiments/<your_experiment_name>`` will
+        compute the mean squared error of reconstructing the entire dataset using the model
+        with the lowest evaluation loss from the latest stage.
+ 
+
++++++++++++++++++++++
+Generating embeddings
++++++++++++++++++++++
+
 ++++++++++++++++++++++
-TREBA Quickstart guide
+TREBA quickstart guide
 ++++++++++++++++++++++
+-       Under construction
+
+
++++++++++++++++++++++++++
+VQ-TREBA quickstart guide
++++++++++++++++++++++++++
 -       Under construction
 
 

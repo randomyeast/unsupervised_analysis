@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>TVAE encoder explanation &#8212; Kennedy lab unsupervised analysis tools 0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="lib.util" href="util.html" />
+    <link rel="prev" title="lib.models.tvae" href="tvae.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="util.html" title="lib.util"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tvae.html" title="lib.models.tvae"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Kennedy lab unsupervised analysis tools 0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lib.html" >vq-triplet-treba.lib</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="models.html" >lib.models</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="tvae.html" accesskey="U">lib.models.tvae</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">TVAE encoder explanation</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="tvae-encoder-explanation">
+<h1>TVAE encoder explanation<a class="headerlink" href="#tvae-encoder-explanation" title="Permalink to this heading">¶</a></h1>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><img alt="_images/encoder.png" class="align-center" id="recurrent-encoder" src="_images/encoder.png" />
+<p><strong>Recurrent portion of encoder</strong></p>
+<ul>
+<li><p>While the model defaults to using Gated Recurrent Units (GRUs),
+the recurrent portion of the encoder can be described as a network
+of simpler recurrent units, shown in <a class="reference internal" href="#recurrent-encoder">recurrent-encoder</a>.</p></li>
+<li><p>The recurrent portion of the encoder succesively computes and
+propagates hidden states denoted <span class="math notranslate nohighlight">\(h_{t,j}\)</span> for each time
+step <span class="math notranslate nohighlight">\(t\)</span> and each layer <span class="math notranslate nohighlight">\(j\)</span> of the network.</p></li>
+<li><p>To give an example of how the model works, let
+<span class="math notranslate nohighlight">\(x_t\)</span> be the input at time <span class="math notranslate nohighlight">\(t\)</span> which is a
+concatenation of the current state <span class="math notranslate nohighlight">\(s_t\)</span> and the action
+<span class="math notranslate nohighlight">\(a_t\)</span>, where <span class="math notranslate nohighlight">\(a_{t}\)</span> represents the change from
+<span class="math notranslate nohighlight">\(s_t\)</span> to <span class="math notranslate nohighlight">\(s_{t+1}\)</span>. To compute <span class="math notranslate nohighlight">\(h_{t,0}\)</span> for
+any <span class="math notranslate nohighlight">\(t\)</span> using <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.RNN.html">PyTorch’s basic RNN module</a>,
+the following equations are used.</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}g_{t} = (W_{0} x_{t} + b_{W_{0}}) + (U_{0} h_{t-1} + b_{U_{0}})\\h_{t} = \sigma(g_{t})\end{aligned}\end{align} \]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(W_{0}\)</span> is a matrix of learned weights mapping from
+the input space to the hidden space of layer 0 and
+<span class="math notranslate nohighlight">\(b_{W_{0}}\)</span> is the vector of corresponding biases.</p></li>
+<li><p><span class="math notranslate nohighlight">\(U_{0}\)</span> is a matrix of weights mapping the hidden state
+from the previous time step to the current time step and
+<span class="math notranslate nohighlight">\(b_{U_{0}}\)</span> is the vector of corresponding biases.</p></li>
+<li><p>There will be different weights <span class="math notranslate nohighlight">\(W_{j}, U_{j}\)</span> and
+biases <span class="math notranslate nohighlight">\(b_{W_{j}}, b_{U_{j}}\)</span> for each layer</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sigma\)</span> is the activation function, which when using
+<code class="docutils literal notranslate"><span class="pre">torch.nn.RNN</span></code> defaults to hyperbolic tagent.</p></li>
+</ul>
+</li>
+<li><p>The recurrent portion of the TVAE’s encoder is an attribute
+called <code class="docutils literal notranslate"><span class="pre">enc_birnn</span></code>. When calling <code class="docutils literal notranslate"><span class="pre">enc_birnn(x)</span></code>,x should
+be a tensor of shape <code class="docutils literal notranslate"><span class="pre">[seq_len,</span> <span class="pre">batch_size,state_dim*2]</span></code>.
+The output of <code class="docutils literal notranslate"><span class="pre">self.enc_birnn(x)</span></code> is a tuple of tensors
+<code class="docutils literal notranslate"><span class="pre">outputs,</span> <span class="pre">hiddens</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">outputs</span></code> tensor (shown in red) will be of shape
+<code class="docutils literal notranslate"><span class="pre">[seq_len,</span> <span class="pre">batch_size,</span> <span class="pre">rnn_dim]</span></code> Indexing along the first
+dimension of <code class="docutils literal notranslate"><span class="pre">outputs</span></code> gives the value of <span class="math notranslate nohighlight">\(h_{t}\)</span>
+for each time step.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">hiddens</span></code> tensor (shown above in blue) will be of shape
+<code class="docutils literal notranslate"><span class="pre">[num_layers,</span> <span class="pre">batch_size,</span> <span class="pre">rnn_dim]</span></code>. Indexing along the
+<code class="docutils literal notranslate"><span class="pre">num_layers</span></code> dimension gives the computed hidden state at
+the final time step for each layer in the RNN.</p></li>
+</ul>
+<p><strong>Model variations</strong></p>
+<ul class="simple">
+<li><p>There are two model variations available, each differs in what
+output of <code class="docutils literal notranslate"><span class="pre">enc_birnn</span></code> is passed to the fully connected
+portion of the encoder.</p>
+<ul>
+<li><p>The first variation is the default. If <span class="math notranslate nohighlight">\(T\)</span> and
+<span class="math notranslate nohighlight">\(M\)</span> represent the sequence length and number of
+layers used, respectively, this variation passes
+<span class="math notranslate nohighlight">\(\frac{1}{T} \sum^{T} h_{t,M}\)</span> to the fully
+connected portion of the encoder.</p></li>
+<li><p>The second variation is used when <code class="docutils literal notranslate"><span class="pre">final_hidden</span></code> is
+set to <code class="docutils literal notranslate"><span class="pre">True</span></code> in the configuration dictionary passed to
+the model. In this case, the hidden state at the final
+time step and final layer <span class="math notranslate nohighlight">\(h_{T,M}\)</span> is passed to the
+fully connected portion of the encoder.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Fully connected portion of encoder</strong></p>
+<ul class="simple">
+<li><p>The output of the recurrent portion of the encoder is passed
+through two fully connected layers each with dimensionality
+specified by the <code class="docutils literal notranslate"><span class="pre">h_dim</span></code> parameter. Both use a ReLU
+activation function and are within an attribute called
+<code class="docutils literal notranslate"><span class="pre">enc_fc</span></code>.</p></li>
+<li><p>The output of <code class="docutils literal notranslate"><span class="pre">enc_fc</span></code> is passed through two separate layers
+<code class="docutils literal notranslate"><span class="pre">enc_mean</span></code> and <code class="docutils literal notranslate"><span class="pre">enc_logvar</span></code> which learn to infer
+the mean and log variance that parameterize the posterior
+distribution over the latent space.</p></li>
+</ul>
+</div></blockquote>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">TVAE encoder explanation</a><ul>
+<li><a class="reference internal" href="#notes">Notes</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="tvae.html"
+                          title="previous chapter">lib.models.tvae</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="util.html"
+                          title="next chapter">lib.util</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/encoder_explanation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="util.html" title="lib.util"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tvae.html" title="lib.models.tvae"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Kennedy lab unsupervised analysis tools 0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lib.html" >vq-triplet-treba.lib</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="models.html" >lib.models</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="tvae.html" >lib.models.tvae</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">TVAE encoder explanation</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Andrew Ulmer (adapted from Jennifer J. Sun).
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
+    </div>
+  </body>
+</html>

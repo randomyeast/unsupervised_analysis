@@ -4,8 +4,7 @@ lib.util.datasets
 .. toctree::
    :maxdepth: 4
 
-   random_trajectories
-
+   mouse_v1
 
 .. automodule:: lib.util.datasets.core 
     :members:

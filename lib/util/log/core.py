@@ -97,5 +97,16 @@ class LogEntry(object):
         for key in self._metrics:
             self._metrics[key] /= N
 
+    def write_to_tensorboard(self, writer, epoch, train=True):
+        for loss, val in self.losses.items():
+            label = 'train' if train else 'eval'
+            writer.add_scalar(
+                f'Loss/{label}/{loss}',
+                val,
+                epoch
+            )
+        return writer    
+    
+
     def to_dict(self):
         return { 'losses' : self._losses, 'metrics' : self.metrics }

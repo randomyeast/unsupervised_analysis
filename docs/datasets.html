@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>lib.util.datasets &#8212; Kennedy lab unsupervised analysis tools 0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
@@ -14,11 +14,12 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="lib.util.datasets.random_trajectories" href="random_trajectories.html" />
+    <link rel="next" title="lib.util.datasets.mouse_v1" href="mouse_v1.html" />
     <link rel="prev" title="lib.util" href="util.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -31,7 +32,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="random_trajectories.html" title="lib.util.datasets.random_trajectories"
+          <a href="mouse_v1.html" title="lib.util.datasets.mouse_v1"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="util.html" title="lib.util"
@@ -49,20 +50,86 @@
           <div class="body" role="main">
             
   <section id="lib-util-datasets">
-<h1>lib.util.datasets<a class="headerlink" href="#lib-util-datasets" title="Permalink to this headline">¶</a></h1>
+<h1>lib.util.datasets<a class="headerlink" href="#lib-util-datasets" title="Permalink to this heading">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="random_trajectories.html">lib.util.datasets.random_trajectories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mouse_v1.html">lib.util.datasets.mouse_v1</a><ul class="simple">
+</ul>
+</li>
 </ul>
 </div>
 <span class="target" id="module-lib.util.datasets.core"></span><dl class="py class">
 <dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.util.datasets.core.</span></span><span class="sig-name descname"><span class="pre">TrajectoryDataset</span></span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.util.datasets.core.</span></span><span class="sig-name descname"><span class="pre">TrajectoryDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for datasets of fixed-length trajectories.</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.__getitem__">
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a fixed length trajectory from either training or testing set.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract dataset class for fixed-length trajectory datasets. When
+working with any new type of dataset, create a new subclass of this
+class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_config</strong> (<em>dict</em>) – <dl class="simple">
+<dt>A dictionary containing the following model attributes:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt><cite>test_proportion</cite>: float (optional)</dt><dd><p>Proportion of dataset to use for testing.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><cite>traj_len</cite>: int (optional)</dt><dd><p>Length of trajectories in frames to use. Not used in this
+object but it is recommended to use this in the
+implementation of the subclass.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.__len__">
+<span class="sig-name descname"><span class="pre">__len__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.__len__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the length of the dataset.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the dataset to evaluation mode.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.fit_preprocess">
+<span class="sig-name descname"><span class="pre">fit_preprocess</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.fit_preprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit parameters used for preprocessing e.g. singular value
+decomposition</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.load_data">
+<span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.load_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the dataset, this must be implemented in the subclass
+used for training the model. It must return a tensor of shape
+<code class="docutils literal notranslate"><span class="pre">[num_trajectories,</span> <span class="pre">trajectory_length,</span> <span class="pre">feature_dim]</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the dataset to training mode.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -82,8 +149,8 @@
   </div>
   <div>
     <h4>Next topic</h4>
-    <p class="topless"><a href="random_trajectories.html"
-                          title="next chapter">lib.util.datasets.random_trajectories</a></p>
+    <p class="topless"><a href="mouse_v1.html"
+                          title="next chapter">lib.util.datasets.mouse_v1</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -101,7 +168,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -116,7 +183,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="random_trajectories.html" title="lib.util.datasets.random_trajectories"
+          <a href="mouse_v1.html" title="lib.util.datasets.mouse_v1"
              >next</a> |</li>
         <li class="right" >
           <a href="util.html" title="lib.util"
@@ -129,7 +196,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Andrew Ulmer (adapted from Jennifer J. Sun).
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
     </div>
   </body>
 </html>

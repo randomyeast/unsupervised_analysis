@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,6 +13,7 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     
     <link rel="index" title="Index" href="#" />
@@ -46,12 +47,14 @@
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
@@ -61,6 +64,8 @@
 <h2 id="_">_</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="datasets.html#lib.util.datasets.core.TrajectoryDataset.__getitem__">__getitem__() (lib.util.datasets.core.TrajectoryDataset method)</a>
+</li>
       <li><a href="models.html#lib.models.core.BaseSequentialModel.__init__">__init__() (lib.models.core.BaseSequentialModel method)</a>
 
       <ul>
@@ -72,7 +77,13 @@
 </li>
         <li><a href="datasets.html#lib.util.datasets.core.TrajectoryDataset.__init__">(lib.util.datasets.core.TrajectoryDataset method)</a>
 </li>
+        <li><a href="mouse_v1.html#lib.util.datasets.mouse_v1.core.MouseV1Dataset.__init__">(lib.util.datasets.mouse_v1.core.MouseV1Dataset method)</a>
+</li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="datasets.html#lib.util.datasets.core.TrajectoryDataset.__len__">__len__() (lib.util.datasets.core.TrajectoryDataset method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -91,8 +102,6 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="tvae.html#lib.models.tvae.core.TVAE.decoder">decoder (lib.models.tvae.core.TVAE attribute)</a>
-</li>
       <li><a href="distributions.html#lib.distributions.core.Distribution">Distribution (class in lib.distributions.core)</a>
 </li>
   </ul></td>
@@ -101,13 +110,19 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="tvae.html#lib.models.tvae.core.TVAE.encoder">encoder (lib.models.tvae.core.TVAE attribute)</a>
+      <li><a href="datasets.html#lib.util.datasets.core.TrajectoryDataset.eval">eval() (lib.util.datasets.core.TrajectoryDataset method)</a>
 </li>
   </ul></td>
 </tr></table>
 
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tvae.html#lib.models.tvae.core.TVAE.fit">fit() (lib.models.tvae.core.TVAE method)</a>
+</li>
+      <li><a href="datasets.html#lib.util.datasets.core.TrajectoryDataset.fit_preprocess">fit_preprocess() (lib.util.datasets.core.TrajectoryDataset method)</a>
+</li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tvae.html#lib.models.tvae.core.TVAE.forward">forward() (lib.models.tvae.core.TVAE method)</a>
 
@@ -120,11 +135,23 @@
   </ul></td>
 </tr></table>
 
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tvae.html#lib.models.tvae.decoder.TVAEDecoder.generate_rollout">generate_rollout() (lib.models.tvae.decoder.TVAEDecoder method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models.html#lib.models.core.BaseSequentialModel.init_hidden_state">init_hidden_state() (lib.models.core.BaseSequentialModel method)</a>
+
+      <ul>
+        <li><a href="tvae.html#lib.models.tvae.decoder.TVAEDecoder.init_hidden_state">(lib.models.tvae.decoder.TVAEDecoder method)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -167,8 +194,6 @@
         <li><a href="tvae.html#module-lib.models.tvae.core">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     lib.models.tvae.decoder
 
@@ -176,6 +201,8 @@
         <li><a href="tvae.html#module-lib.models.tvae.decoder">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     lib.models.tvae.encoder
 
@@ -191,10 +218,16 @@
 </li>
       </ul></li>
       <li>
-    lib.util.datasets.random_trajectories
+    lib.util.datasets.mouse_v1.core
 
       <ul>
-        <li><a href="random_trajectories.html#module-lib.util.datasets.random_trajectories">module</a>
+        <li><a href="mouse_v1.html#module-lib.util.datasets.mouse_v1.core">module</a>
+</li>
+      </ul></li>
+      <li><a href="datasets.html#lib.util.datasets.core.TrajectoryDataset.load_data">load_data() (lib.util.datasets.core.TrajectoryDataset method)</a>
+
+      <ul>
+        <li><a href="mouse_v1.html#lib.util.datasets.mouse_v1.core.MouseV1Dataset.load_data">(lib.util.datasets.mouse_v1.core.MouseV1Dataset method)</a>
 </li>
       </ul></li>
       <li><a href="distributions.html#lib.distributions.normal.Normal.log_prob">log_prob() (lib.distributions.normal.Normal method)</a>
@@ -205,6 +238,8 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mouse_v1.html#lib.util.datasets.mouse_v1.core.MouseV1Dataset.med_filter">med_filter() (lib.util.datasets.mouse_v1.core.MouseV1Dataset method)</a>
+</li>
       <li><a href="tvae.html#lib.models.tvae.core.TVAE.model_params">model_params() (lib.models.tvae.core.TVAE method)</a>
 </li>
       <li>
@@ -225,11 +260,15 @@
 </li>
         <li><a href="datasets.html#module-lib.util.datasets.core">lib.util.datasets.core</a>
 </li>
-        <li><a href="random_trajectories.html#module-lib.util.datasets.random_trajectories">lib.util.datasets.random_trajectories</a>
+        <li><a href="mouse_v1.html#module-lib.util.datasets.mouse_v1.core">lib.util.datasets.mouse_v1.core</a>
 </li>
         <li><a href="test.html#module-test">test</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mouse_v1.html#lib.util.datasets.mouse_v1.core.MouseV1Dataset">MouseV1Dataset (class in lib.util.datasets.mouse_v1.core)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -253,13 +292,31 @@
   </ul></td>
 </tr></table>
 
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mouse_v1.html#lib.util.datasets.mouse_v1.core.MouseV1Dataset.postprocess">postprocess() (lib.util.datasets.mouse_v1.core.MouseV1Dataset method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mouse_v1.html#lib.util.datasets.mouse_v1.core.MouseV1Dataset.preprocess">preprocess() (lib.util.datasets.mouse_v1.core.MouseV1Dataset method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tvae.html#lib.models.tvae.core.TVAE.reconstruct">reconstruct() (lib.models.tvae.core.TVAE method)</a>
 </li>
+      <li><a href="mouse_v1.html#lib.util.datasets.mouse_v1.core.MouseV1Dataset.register_mars_trajectory_angles">register_mars_trajectory_angles() (lib.util.datasets.mouse_v1.core.MouseV1Dataset method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mouse_v1.html#lib.util.datasets.mouse_v1.core.MouseV1Dataset.register_mars_trajectory_centroids">register_mars_trajectory_centroids() (lib.util.datasets.mouse_v1.core.MouseV1Dataset method)</a>
+</li>
+      <li><a href="mouse_v1.html#lib.util.datasets.mouse_v1.core.MouseV1Dataset.register_pose_trajectories">register_pose_trajectories() (lib.util.datasets.mouse_v1.core.MouseV1Dataset method)</a>
+</li>
       <li><a href="tvae.html#lib.models.tvae.decoder.TVAEDecoder.reset_policy">reset_policy() (lib.models.tvae.decoder.TVAEDecoder method)</a>
 </li>
   </ul></td>
@@ -269,6 +326,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="distributions.html#lib.distributions.normal.Normal.sample">sample() (lib.distributions.normal.Normal method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tvae.html#lib.models.tvae.core.TVAE.save_checkpoint">save_checkpoint() (lib.models.tvae.core.TVAE method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -283,10 +344,14 @@
         <li><a href="test.html#module-test">module</a>
 </li>
       </ul></li>
-      <li><a href="datasets.html#lib.util.datasets.core.TrajectoryDataset">TrajectoryDataset (class in lib.util.datasets.core)</a>
+      <li><a href="tvae.html#lib.models.tvae.core.TVAE.test">test() (lib.models.tvae.core.TVAE method)</a>
+</li>
+      <li><a href="datasets.html#lib.util.datasets.core.TrajectoryDataset.train">train() (lib.util.datasets.core.TrajectoryDataset method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="datasets.html#lib.util.datasets.core.TrajectoryDataset">TrajectoryDataset (class in lib.util.datasets.core)</a>
+</li>
       <li><a href="tvae.html#lib.models.tvae.core.TVAE">TVAE (class in lib.models.tvae.core)</a>
 </li>
       <li><a href="tvae.html#lib.models.tvae.decoder.TVAEDecoder">TVAEDecoder (class in lib.models.tvae.decoder)</a>
@@ -300,6 +365,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models.html#lib.models.core.BaseSequentialModel.update_hidden">update_hidden() (lib.models.core.BaseSequentialModel method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tvae.html#lib.models.tvae.decoder.TVAEDecoder.update_hidden_state">update_hidden_state() (lib.models.tvae.decoder.TVAEDecoder method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -321,7 +390,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -341,7 +410,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Andrew Ulmer (adapted from Jennifer J. Sun).
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
     </div>
   </body>
 </html>

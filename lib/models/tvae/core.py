@@ -1,33 +1,58 @@
-from re import I
+import os
 import torch
+from glob import glob
+from tqdm import tqdm
 
-from lib.models import BaseSequentialModel
 from lib.distributions import Normal
+from lib.util.log import LogEntry
+from lib.models import BaseSequentialModel
 from lib.models.tvae.encoder import TVAEEncoder
 from lib.models.tvae.decoder import TVAEDecoder
 
 class TVAE(BaseSequentialModel):
-    """Trajectory Variational Autoencder
-    """
-    
-    # Model does not use labels
-    requires_labels = False
-    
     # Set default loss weights
     loss_params = {
         "nll": 1.0,
         "kld": 1.0
     }
 
-    def __init__(self, model_config):
-        """Defines the model architecture
+    # TVAE does not require labels
+    requires_labels = False
 
-        Attributes:
-            encoder (TVAEEncoder) 
-                Returns a posterior distribution over the latent space
-            
-            decoder (TVAEDecoder)
-                Reconstructs the input states from a sample from the posterior
+    def __init__(self, model_config):
+        """
+        Trajectory Variational Autoencoder (TVAE): relatively simple 
+        variational autoencoder which learns lower dimensional embeddings
+        of fixed length trajectories.
+
+        Attributes
+        ==========
+        - encoder : TVAEEncoder
+            Infers a posterior distribution over the latent space
+        - decoder : TVAEDecoder
+            Reconstructs the input states using a sample from the inferred posterior
+
+
+        Parameters
+        ========== 
+        model_config: dict
+            A dictionary containing the following model attributes:
+                - `state_dim`: int
+                    The dimensionality of the input space.
+                - `rnn_dim`: int
+                    The dimensionality of the hidden state of the GRU.
+                - `num_layers`: int
+                    The number of layers to use in the recurrent
+                    portion of the decoder.
+                - `h_dim`: int
+                    The dimensionality of the space mapped to ``dec_action_fc``.
+                - `z_dim`: int
+                    The dimensionality of the latent space mapped to by the
+                    encoder.
+                - `teacher_force`: bool
+                    Whether or not to use the true or rolled-out state as inputs
+                    to the recurrent unit at each timestep.
+
         """
 
         super().__init__(model_config)
@@ -46,7 +71,10 @@ class TVAE(BaseSequentialModel):
         # Define TVAE architecture
         self.encoder = TVAEEncoder(self.log, **self.config)
         self.decoder = TVAEDecoder(self.log, **self.config)
-    
+
+        # Initialize the model's training stages
+        self.stage = 0
+
     def _define_losses(self):
         """
         Creates loss entry in ``self.log`` object. Called by the ``__init__`` 
@@ -66,40 +94,162 @@ class TVAE(BaseSequentialModel):
         embed: bool
             If true, return the mean of the inferred posterior
         """
-        # Reset the loss
+        # Reset the loss - code block OK
         self.log.reset()
         states = states.transpose(0,1)
 
         # Encode the states
         posterior = self.encoder(states)
         
-        # Compute kl divergence from unit Gaussian prior TODO: make all attrbutes available at the top-level
+        # Compute kl divergence from unit Gaussian prior
         kld = Normal.kl_divergence(posterior, free_bits=1/self.config['z_dim'])
         self.log.losses["kld"] = torch.sum(kld)
 
         # Use sample from posterior to generate a reconstruction
-        self.decoder(states, posterior.sample())      
+        if self.stage == 0:
+            self.decoder(states, posterior.sample())      
+        else:
+            nll, _ = self.decoder.generate_rollout(states, posterior.sample())
+            self.log.losses["nll"] = nll
 
-        return posterior
+        return self.log 
 
-    def reconstruct(self, states):
-        """
-        Reconstructs the input states using a sample from the posterior
-        """
-        # Encode the states
-        posterior = self.encoder(states)
+    def reconstruct(self, states, num_samples=10, embed=False, device=torch.device('cpu')):
+        """Reconstructs the input states using samples from the posterior
         
-        # Use sample from posterior to generate a reconstruction
-        reconstruction = self.decoder(states, posterior.sample(), reconstruct=True) 
+        Parameters
+        ----------
+        states : torch.tensor
+            Tensor of shape [num_trajs, traj_len, num_feats]  
+        num_samples : int
+            The number of samples to draw from the posterior to reconstruct     
+            the input. The reconstruction with the lowest NLL will be returned.
 
-        return reconstruction 
+        """
+        with torch.no_grad():
+
+            if not torch.is_tensor(states):
+                # Assuming the states are a dataset
+                states = states[:]
+
+            # Transpose the states to shape expected by generate_rollout
+            states = states.transpose(0,1).to(device)
+
+            # Encode the states
+            posterior = self.encoder(states)
+            
+            # Use sample from posterior to generate a reconstruction
+            # reconstruction = self.decoder(states, posterior.sample(), reconstruct=True) 
+            curr_z = posterior.sample()
+            best_nll = torch.inf 
+            for _ in range(num_samples): 
+                nll, reconstruction = self.decoder.generate_rollout(
+                    states,
+                    curr_z
+                )
+                if nll < best_nll:
+                    best_recon = reconstruction
+                    best_nll = nll
+
+            if embed:
+                return best_recon.transpose(0,1), curr_z
+            else:
+                return best_recon.transpose(0,1)
+
+
+    def fit(self, data_loader, device=torch.device('cuda')):
+        """Fits the model using the provided data
+        
+        Parameters
+        ---------- 
+        data_loader : `torch.utils.data.DataLoader <https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader>`_
+            A wrapper around a TrajectoryDataset object which allows for easy random sampling and batching.
+        
+        device (optional) : `torch.device <https://pytorch.org/docs/stable/tensor_attributes.html#torch.device>`_
+            Device to perform model computations on.
+        """
+        data_loader.dataset.train()
+        self.train()
+        epoch_log = LogEntry()
+        for batch_idx, states in enumerate(tqdm(data_loader)):
+            batch_log = self(states.to(device))
+            self.optimize(batch_log.losses)
+            batch_log.itemize()
+            epoch_log.absorb(batch_log)
+
+        epoch_log.average(N=len(data_loader.dataset))
+
+        return epoch_log
+ 
+    def test(self, data_loader, device=torch.device('cuda')):
+        """Evaluates the model using the provided data
+        
+        Parameters
+        ---------- 
+        data_loader : `torch.utils.data.DataLoader <https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader>`_
+            A wrapper around a TrajectoryDataset object which allows for easy random sampling and batching.
+        
+        device (optional) : `torch.device <https://pytorch.org/docs/stable/tensor_attributes.html#torch.device>`_
+            Device to perform model computations on.
+        """
+        data_loader.dataset.eval()
+        self.eval() 
+        with torch.no_grad():
+            epoch_log = LogEntry()
+            for batch_idx, states in enumerate(tqdm(data_loader)):
+                batch_log = self(states.to(device))
+                batch_log.itemize()
+                epoch_log.absorb(batch_log)
+
+            epoch_log.average(N=len(data_loader.dataset))
+
+        return epoch_log
+
+    def save_checkpoint(self, config, name='model'):
+        """Saves a model checkpoint to the experiment directory, using the correct naming convention
+
+        Parameters
+        ---------- 
+        config : str 
+            The path to the directory for this experiment.
+        name : str
+            The name to save the checkpoint to.
+
+        """
+
+        if 'best' in name:
+            name = name.split('_')[0]
+            path = os.path.join(os.getcwd(), config, 'checkpoints', f'stage_{self.stage}', f'{name}.pt')
+        else:
+            path = os.path.join(os.getcwd(), config, 'checkpoints', f'stage_{self.stage}', f'{name}.pt')
+        torch.save(self.state_dict(), path)
+
+    def load_best_checkpoint(self, config_dir):
+        """Loads a model checkpoint from the experiment directory, using the correct naming convention
+
+        Parameters
+        ---------- 
+        config : str 
+            The path to the directory for this experiment.
+        name : str
+            The name to load the checkpoint from.
+        """
+        stage_dirs = [d for d in glob(f'{config_dir}/checkpoints/*')]
+        last_stage = stage_dirs[-1]
+        best_path = os.path.join(last_stage, 'best.pt')
+        self.load_state_dict(torch.load(best_path))
+
 
     def model_params(self):
         """
         Returns a list of all model parameters - used to optimize the learnable parameters"""
-        params = list(self.encoder.enc_birnn.parameters()) + list(self.encoder.enc_fc.parameters())
-        params += list(self.encoder.enc_mean.parameters()) + list(self.encoder.enc_logvar.parameters())
-        params += list(self.decoder.dec_birnn.parameters()) + list(self.decoder.dec_action_fc.parameters()) 
-        params += list(self.decoder.dec_action_mean.parameters()) + list(self.decoder.dec_action_logvar.parameters())
+        params = list(self.encoder.enc_birnn.parameters()) + \
+                list(self.encoder.enc_fc.parameters()) + \
+                list(self.encoder.enc_mean.parameters()) + \
+                list(self.encoder.enc_logvar.parameters()) + \
+                list(self.decoder.dec_birnn.parameters()) + \
+                list(self.decoder.dec_action_fc.parameters()) + \
+                list(self.decoder.dec_action_mean.parameters()) + \
+                list(self.decoder.dec_action_logvar.parameters())
 
         return params
