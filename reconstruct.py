@@ -16,7 +16,10 @@ from lib.util.datasets import load_dataset, dataset_dict
 def reconstruct(model, eval_config, data_config):
     # Instantiation of the dataset should be instantiation of the base class
     dataset_type = dataset_dict[data_config['dataset_type']]
-    vid_dict = dataset_type.load_vid_dict(eval_config['root_data_dir'])
+    vid_dict = dataset_type.load_vid_dict(
+        dataset_type,
+        eval_config['root_data_dir']
+    )
     vid_dict = dataset_type.convert_to_trajectories(
         vid_dict,
         traj_len=data_config['traj_len']

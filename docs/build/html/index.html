@@ -73,11 +73,10 @@ as well as a section with more explicit mathematical details.</p></li>
 <h2>Setting up a new experiment<a class="headerlink" href="#setting-up-a-new-experiment" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>To setup the directory structure for a new experiment, in the terminal
-type <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">setup.bash</span> <span class="pre">&lt;your_new_project_name&gt;</span></code>, replacing <code class="docutils literal notranslate"><span class="pre">&lt;your_new_project_name&gt;</span></code>
-with the name of your new project.</p>
+type <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">setup.bash</span> <span class="pre">&lt;your_new_project_name&gt;</span></code></p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">./experiments/&lt;your_new_project_name&gt;/checkpoints</span></code> will be where the
-model checkpoints will be store.</p></li>
+model checkpoints will be stored.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">./experiments/&lt;your_new_project_name/log</span></code> will be where the log used
 to visualize the loss in tensorboard will be stored.</p></li>
 </ul>
@@ -87,11 +86,12 @@ to visualize the loss in tensorboard will be stored.</p></li>
 <code class="docutils literal notranslate"><span class="pre">./experiments/&lt;your_new_project_name/</span></code>. The <code class="docutils literal notranslate"><span class="pre">config.json</span></code> has three dictionaries
 within it:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">data_config</span></code>: This is passed to the instantiation of a new dataset object
-which will be explained in the next step. Any additional parameters needed
-for loading and preprocessing data should be added here. After you create
+<li><p><code class="docutils literal notranslate"><span class="pre">data_config</span></code>: This is passed to the instantiation of a new dataset object.
+Dataset objects will be explained in the third step. Any additional parameters
+needed for loading and preprocessing data should be added here. After you create
 a new dataset object in the next step, you will need to change the <code class="docutils literal notranslate"><span class="pre">name</span></code>
-parameter here to reflect the new dataset object you created.</p></li>
+parameter here to reflect the new dataset object you created as well as in
+<code class="docutils literal notranslate"><span class="pre">./lib/util/datasets/__init__.py</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">model_config</span></code>: This is used to pick the model architecture being used (e.g.
 <code class="docutils literal notranslate"><span class="pre">TVAE</span></code> in the example configuration) and to configure the dimensions of the
 different layers in the model. If you’re creating a new dataset object, the
@@ -111,13 +111,16 @@ documentation for each model.</p></li>
 </li>
 </ul>
 </section>
-<section id="structuring-your-folders">
-<h2>Structuring your folders<a class="headerlink" href="#structuring-your-folders" title="Permalink to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>In all likelihood, you are learning representations of video data. It will be easiest
-to adapt the existing code and structure the outputs of the model, if you make a
-root directory with sub folders for each video. The model training code does not
-require this structure, but the code for generating embeddings and reconstruction does.</p></li>
+<section id="structuring-the-folders-containing-your-data">
+<h2>Structuring the folders containing your data<a class="headerlink" href="#structuring-the-folders-containing-your-data" title="Permalink to this heading">¶</a></h2>
+<ul>
+<li><p>In all likelihood, you are learning representations of video data. Much of the
+code in this repo assumes your data has the following structure:</p>
+<img alt="_images/data_structure.png" src="_images/data_structure.png" />
+<p>where <code class="docutils literal notranslate"><span class="pre">vid_1</span></code>, <code class="docutils literal notranslate"><span class="pre">vid_2</span></code>, and <code class="docutils literal notranslate"><span class="pre">vid_3</span></code> corresponds to directories which
+contain the data you are learning representations of. The outputs of the
+model corresponding to a given video will be stored in that video’s directory.</p>
+</li>
 </ul>
 </section>
 <section id="creating-a-new-dataset-object">
@@ -126,7 +129,7 @@ require this structure, but the code for generating embeddings and reconstructio
 <li><p>To train any of the model variants, you first need to create
 a new dataset object which inherits from the base module
 <a class="reference internal" href="datasets.html#lib.util.datasets.core.TrajectoryDataset" title="lib.util.datasets.core.TrajectoryDataset"><code class="xref py py-mod docutils literal notranslate"><span class="pre">TrajectoryDataset</span></code></a>.
-An example dataset is available
+An example dataset is available here:
 <a class="reference internal" href="mouse_v1.html#lib.util.datasets.mouse_v1.core.MouseV1Dataset" title="lib.util.datasets.mouse_v1.core.MouseV1Dataset"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MouseV1Dataset</span></code></a></p></li>
 <li><p>The first method from <a class="reference internal" href="datasets.html#lib.util.datasets.core.TrajectoryDataset" title="lib.util.datasets.core.TrajectoryDataset"><code class="xref py py-mod docutils literal notranslate"><span class="pre">TrajectoryDataset</span></code></a>
 you need to override in your new dataset object is <code class="docutils literal notranslate"><span class="pre">load_data(data_config)</span></code>.</p>
@@ -134,14 +137,15 @@ you need to override in your new dataset object is <code class="docutils literal
 <li><p>This function is called to load the trajectories you are interested in
 embedding and should return a <code class="docutils literal notranslate"><span class="pre">np.array</span></code> or <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code> of the
 shape <code class="docutils literal notranslate"><span class="pre">[num_trajs,</span> <span class="pre">traj_len,</span> <span class="pre">num_features]</span></code></p></li>
-<li><p>Any paths to files storing data can be passed to <code class="docutils literal notranslate"><span class="pre">load_data</span></code> using
-the <code class="docutils literal notranslate"><span class="pre">data_config</span></code> dictionary in <code class="docutils literal notranslate"><span class="pre">config.json</span></code> in
-your experiment folder. For example,
-<a class="reference internal" href="mouse_v1.html#lib.util.datasets.mouse_v1.core.MouseV1Dataset" title="lib.util.datasets.mouse_v1.core.MouseV1Dataset"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MouseV1Dataset</span></code></a>
-object expects a key called <code class="docutils literal notranslate"><span class="pre">root_data_dir</span></code> to be in <code class="docutils literal notranslate"><span class="pre">data_config</span></code>.</p></li>
+<li><p>There should be a <code class="docutils literal notranslate"><span class="pre">root_data_dir</span></code> field in your <code class="docutils literal notranslate"><span class="pre">data_config</span></code> that
+is the path to the video directories explained in the previous step.</p></li>
 </ul>
 </li>
-<li><p>The second method you need to override is <code class="docutils literal notranslate"><span class="pre">preprocess(data_config,</span> <span class="pre">trajectories)</span></code>.
+<li><p>The second method you will need to override is the static method <code class="docutils literal notranslate"><span class="pre">load_video</span></code>
+which tells <a class="reference internal" href="datasets.html#lib.util.datasets.core.TrajectoryDataset" title="lib.util.datasets.core.TrajectoryDataset"><code class="xref py py-mod docutils literal notranslate"><span class="pre">TrajectoryDataset</span></code></a>
+how to load a single video’s data for your given dataset. The output expected
+for <code class="docutils literal notranslate"><span class="pre">load_video</span></code> is <code class="docutils literal notranslate"><span class="pre">[num_trajs,</span> <span class="pre">traj_len,</span> <span class="pre">num_features]</span></code></p></li>
+<li><p>The third method you need to override is <code class="docutils literal notranslate"><span class="pre">preprocess(data_config,</span> <span class="pre">trajectories)</span></code>.
 This is where you will do any preprocessing of the data loaded in via <code class="docutils literal notranslate"><span class="pre">load_data</span></code>.
 This function must also return a <code class="docutils literal notranslate"><span class="pre">np.array</span></code> or <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code> of the shape
 <code class="docutils literal notranslate"><span class="pre">[num_trajs,</span> <span class="pre">traj_len,</span> <span class="pre">num_features]</span></code>.</p></li>
@@ -151,7 +155,7 @@ This function must also return a <code class="docutils literal notranslate"><spa
 <h2>Training the model<a class="headerlink" href="#training-the-model" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Running <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">train.py</span> <span class="pre">--config_dir</span> <span class="pre">./experiments/&lt;your_experiment_name&gt;</span></code> will
-train the model. It will likely take several hours to converge, depending on your
+train the model. It will likely take several hours to complete, depending on your
 hardware and how much data you are using.</p></li>
 <li><p>Once the model has completed training, there will be a directory titled <code class="docutils literal notranslate"><span class="pre">stage_&lt;x&gt;</span></code>
 within the <code class="docutils literal notranslate"><span class="pre">./experiments/&lt;your_experiment_name&gt;/</span></code> directory, for each stage of
@@ -159,25 +163,39 @@ training you have. Within each of these directories, there will be a file called
 <code class="docutils literal notranslate"><span class="pre">best.pt</span></code> which will be the checkpoint with the lowest negative-log-likelihood
 on the evaluation set for that stage.</p></li>
 <li><p>To monitor the model’s training progress with tensorboard, in the terminal type:
-<code class="docutils literal notranslate"><span class="pre">tensorboard</span> <span class="pre">--logdir=./experiments/example_tvae</span></code></p></li>
+<code class="docutils literal notranslate"><span class="pre">tensorboard</span> <span class="pre">--logdir=./experiments/example_tvae</span></code> and click on link to a port
+on <code class="docutils literal notranslate"><span class="pre">localhost</span></code> that is printed to the terminal. To monitor the training process
+across machines see this note &lt;link&gt;.</p></li>
 </ul>
 </section>
-<section id="generating-reconstructions-not-done-yet">
-<h2>Generating reconstructions (not done yet)<a class="headerlink" href="#generating-reconstructions-not-done-yet" title="Permalink to this heading">¶</a></h2>
+<section id="generating-reconstructions">
+<h2>Generating reconstructions<a class="headerlink" href="#generating-reconstructions" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Running <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">reconstruct.py</span> <span class="pre">--config_dir</span> <span class="pre">./experiments/&lt;your_experiment_name&gt;</span></code> will
-generate reconstructions for all videos in your <code class="docutils literal notranslate"><span class="pre">root_data_dir</span></code> specified
-in <code class="docutils literal notranslate"><span class="pre">data_config</span></code> and outputs them to their respective folders.</p></li>
+generate reconstructions for all videos in the <code class="docutils literal notranslate"><span class="pre">root_data_dir</span></code> specified
+in <code class="docutils literal notranslate"><span class="pre">eval_config</span></code> and outputs them to their respective folders.</p></li>
+<li><p>You can also generate random reconstructions from one of the videos in <code class="docutils literal notranslate"><span class="pre">root_data_dir</span></code>
+using <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">plot_random_reconstructions</span> <span class="pre">--config_dir</span>
+<span class="pre">./experiments/&lt;your_experiment_name&gt;</span> <span class="pre">--num_reconstructions</span> <span class="pre">&lt;some_integer&gt;</span></code>. The output
+of this will be stored in a <code class="docutils literal notranslate"><span class="pre">random_reconstructions</span></code> folder within your experiment
+folder.</p></li>
+<li><p>All supported models are based on the variational autoencoder and the reconstruction
+process samples <code class="docutils literal notranslate"><span class="pre">eval_config[num_samples]</span></code> embeddings from the inferred posterior,
+decodes each embedding to get a reconstruction, and then picks the “best” reconstruction
+as the one with the lowest negative-log-likelihood. Increasing <code class="docutils literal notranslate"><span class="pre">eval_config[num_samples]</span></code>
+will dramatically increase the amount of time it takes for <code class="docutils literal notranslate"><span class="pre">reconstruct.py</span></code> to complete,
+but you may get more realistic reconstructions of the input data.</p></li>
 </ul>
 </section>
-<section id="generating-embeddings-using-the-tvae-not-done-yet">
-<h2>Generating embeddings using the TVAE (not done yet)<a class="headerlink" href="#generating-embeddings-using-the-tvae-not-done-yet" title="Permalink to this heading">¶</a></h2>
+<section id="generating-embeddings-using-the-tvae">
+<h2>Generating embeddings using the TVAE<a class="headerlink" href="#generating-embeddings-using-the-tvae" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Running <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">embed.py</span> <span class="pre">--config_dir</span> <span class="pre">./experiments/&lt;your_experiment_name&gt;</span></code> will
-generate embeddings for all videos in your <code class="docutils literal notranslate"><span class="pre">root_data_dir</span></code> specified in
-<code class="docutils literal notranslate"><span class="pre">data_config</span></code> and outputs them to their respective folders. All of the models
-currently supported are VAE based and the embeddings are the mean of the inferred
-posterior distribution.</p></li>
+iterate through and generate embeddings for all of the video subdirectories in the
+<code class="docutils literal notranslate"><span class="pre">root_data_dir</span></code> specified in <code class="docutils literal notranslate"><span class="pre">eval_config</span></code></p></li>
+<li><p>All of the models currently supported are based on the variational autoencoder
+architecture and use the mean of the inferred posterior for each input as the
+embedding for each trajectory.</p></li>
 </ul>
 </section>
 <section id="treba-quickstart-guide">
@@ -244,11 +262,11 @@ posterior distribution.</p></li>
 </li>
 <li><a class="reference internal" href="#quickstart-guide">Quickstart guide</a><ul>
 <li><a class="reference internal" href="#setting-up-a-new-experiment">Setting up a new experiment</a></li>
-<li><a class="reference internal" href="#structuring-your-folders">Structuring your folders</a></li>
+<li><a class="reference internal" href="#structuring-the-folders-containing-your-data">Structuring the folders containing your data</a></li>
 <li><a class="reference internal" href="#creating-a-new-dataset-object">Creating a new dataset object</a></li>
 <li><a class="reference internal" href="#training-the-model">Training the model</a></li>
-<li><a class="reference internal" href="#generating-reconstructions-not-done-yet">Generating reconstructions (not done yet)</a></li>
-<li><a class="reference internal" href="#generating-embeddings-using-the-tvae-not-done-yet">Generating embeddings using the TVAE (not done yet)</a></li>
+<li><a class="reference internal" href="#generating-reconstructions">Generating reconstructions</a></li>
+<li><a class="reference internal" href="#generating-embeddings-using-the-tvae">Generating embeddings using the TVAE</a></li>
 <li><a class="reference internal" href="#treba-quickstart-guide">TREBA quickstart guide</a></li>
 <li><a class="reference internal" href="#vq-treba-quickstart-guide">VQ-TREBA quickstart guide</a></li>
 <li><a class="reference internal" href="#module-documentation">Module documentation</a></li>

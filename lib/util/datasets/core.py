@@ -1,8 +1,11 @@
+import os
 import torch
 import numpy as np
 
 from torch.utils.data import Dataset
 from torch.utils.data import ConcatDataset
+
+from lib.util.misc import immediate_sub_dirs
 
 TRAIN = 1
 EVAL = 2
@@ -113,9 +116,20 @@ class TrajectoryDataset(Dataset):
         """
         raise NotImplementedError("Subclass must implement load_data")
 
+    def load_vid_dict(dataset_type, root_data_dir):
+        # TODO: add option for subset of videos
+        videos = immediate_sub_dirs(root_data_dir)
+        vid_dict = {}
+        for video in videos:
+            vid_name = video.split('/')[-2]
+            pose_path = os.path.join(video, f'{vid_name}_pose_top_v1_8.json')
+            vid_dict[vid_name] = dataset_type.load_video(pose_path) #json_to_keypoints(pose_path)
+
+        return vid_dict
+
     @staticmethod
-    def load_vid_dict(root_data_dir):
-        raise NotImplementedError("Subclass must implement load_vid_dict")
+    def load_video(path):
+        raise NotImplementedError("Subclass must implement load_video")
 
     @staticmethod
     def convert_to_trajectories(vid_dict, traj_len=61, sliding_window=1):

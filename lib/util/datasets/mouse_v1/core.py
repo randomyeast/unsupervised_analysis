@@ -300,18 +300,6 @@ class MouseV1Dataset(TrajectoryDataset):
 
         return trajectories 
 
-    @staticmethod
-    def load_vid_dict(root_data_dir):
-        # TODO: add option for subset of videos
-        videos = immediate_sub_dirs(root_data_dir)
-        vid_dict = {}
-        for video in videos:
-            vid_name = video.split('/')[-2]
-            pose_path = os.path.join(video, f'{vid_name}_pose_top_v1_8.json')
-            vid_dict[vid_name] = json_to_keypoints(pose_path)
-
-        return vid_dict
-
     def check_precomputed_svd(self):
         """
         Checks to see if SVD has been pre-computed, if so, loads it.
@@ -331,6 +319,10 @@ class MouseV1Dataset(TrajectoryDataset):
             print('-=-= Using pre-computed mean =-=-')
             with open(os.path.join(svd_base_path, 'mean.pickle'), 'rb') as f:
                 self._mean = pickle.load(f)
+
+    @staticmethod
+    def load_video(path):
+        return json_to_keypoints(path)
 
     @staticmethod
     def plot_trajectory(seq, path='./gifs/traj'):
