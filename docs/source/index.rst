@@ -21,10 +21,9 @@ Overview
 -       The goal of this documentation is both to explain how each
         model variant works and make it as easy as possible to adapt
         the models to work on new datasets.
--       The documentation for each model is split up into a concise
-        reference document, meant for those implementing / modifying
-        the models, as well as a section with more explicit mathematical
-        details.
+-       The documentation for each model is split up into a reference
+	document, meant for those implementing / modifying the models,
+	as well as a section with more explicit mathematical details.
 -       Any suggestions are more than welcome.
 
 
@@ -118,22 +117,28 @@ Training the model
         training you have. Within each of these directories, there will be a file called
         ``best.pt`` which will be the checkpoint with the lowest negative-log-likelihood
         on the evaluation set for that stage.
+-       To monitor the model's training progress with tensorboard, in the terminal type:
+        ``tensorboard --logdir=./experiments/example_tvae`` and click on link to a port
+        on ``localhost`` that is printed to the terminal. To monitor the training process
+        across machines see this note <link>.
 
-+++++++++++++++++++++++++++++++++++++++++
-Generating reconstructions (not done yet)
-+++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++
+Generating reconstructions
+++++++++++++++++++++++++++
 -       Running ``python reconstruct.py --config_dir ./experiments/<your_experiment_name>`` will
-        generate reconstructions for all videos in your ``root_data_dir`` specified
-        in ``data_config`` and outputs them to their respective folders.
+        generate reconstructions for all videos in the ``root_data_dir`` specified
+        in ``eval_config`` and outputs them to their respective folders.
 
-+++++++++++++++++++++++++++++++++++++++++++++++++++
-Generating embeddings using the TVAE (not done yet)
-+++++++++++++++++++++++++++++++++++++++++++++++++++
+
+++++++++++++++++++++++++++++++++++++
+Generating embeddings using the TVAE
+++++++++++++++++++++++++++++++++++++
 -       Running ``python embed.py --config_dir ./experiments/<your_experiment_name>`` will
-        generate embeddings for all videos in your ``root_data_dir`` specified in
-        ``data_config`` and outputs them to their respective folders. All of the models 
-        currently supported are VAE based and the embeddings are the mean of the inferred
-        posterior distribution.
+        iterate through and generate embeddings for all of the video subdirectories in the 
+        ``root_data_dir`` specified in ``eval_config``
+-       All of the models currently supported are based on the variational autoencoder
+        architecture and use the mean of the inferred posterior for each input as the 
+        embedding for each trajectory.
 
 ++++++++++++++++++++++
 TREBA quickstart guide

@@ -21,10 +21,9 @@ Overview
 -       The goal of this documentation is both to explain how each
         model variant works and make it as easy as possible to adapt
         the models to work on new datasets.
--       The documentation for each model is split up into a concise
-        reference document, meant for those implementing / modifying
-        the models, as well as a section with more explicit mathematical
-        details.
+-       The documentation for each model is split up into a reference
+	document, meant for those implementing / modifying the models,
+	as well as a section with more explicit mathematical details.
 -       Any suggestions are more than welcome.
 
 

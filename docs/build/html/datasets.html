@@ -60,7 +60,7 @@
 </div>
 <span class="target" id="module-lib.util.datasets.core"></span><dl class="py class">
 <dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.util.datasets.core.</span></span><span class="sig-name descname"><span class="pre">TrajectoryDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.util.datasets.core.</span></span><span class="sig-name descname"><span class="pre">TrajectoryDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectories</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for datasets of fixed-length trajectories.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.__getitem__">
@@ -70,7 +70,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectories</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract dataset class for fixed-length trajectory datasets. When
 working with any new type of dataset, create a new subclass of this
 class.</p>
@@ -105,16 +105,16 @@ implementation of the subclass.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.eval">
-<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.eval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the dataset to evaluation mode.</p>
+<dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.combine">
+<span class="sig-name descname"><span class="pre">combine</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.combine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine the training and testing sets into a single dataset for
+embedding</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.fit_preprocess">
-<span class="sig-name descname"><span class="pre">fit_preprocess</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.fit_preprocess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit parameters used for preprocessing e.g. singular value
-decomposition</p>
+<dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the dataset to evaluation mode.</p>
 </dd></dl>
 
 <dl class="py method">

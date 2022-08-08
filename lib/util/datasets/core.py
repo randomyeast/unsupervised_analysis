@@ -1,9 +1,12 @@
 import torch
 import numpy as np
+
 from torch.utils.data import Dataset
+from torch.utils.data import ConcatDataset
 
 TRAIN = 1
 EVAL = 2
+COMBINED = 3
 
 class TrajectoryDataset(Dataset):
     """Base class for datasets of fixed-length trajectories.
@@ -11,7 +14,7 @@ class TrajectoryDataset(Dataset):
     mode = TRAIN
     test_proportion = 0.2
 
-    def __init__(self, data_config, all_states=None):
+    def __init__(self, data_config, trajectories=None, preprocess=True):
         """Abstract dataset class for fixed-length trajectory datasets. When
         working with any new type of dataset, create a new subclass of this
         class.
@@ -30,14 +33,18 @@ class TrajectoryDataset(Dataset):
         """
  
         # Submodule's load_data method must return all states
-        if all_states is None: # In case you want to pass data directly into the object
+        if trajectories is None: # In case you want to pass data directly into the object
             trajectories = self.load_data(data_config)
+        
+        # If user wants to preprocess the data
+        if preprocess:
             trajectories = self.preprocess(
                 data_config,
                 trajectories
             )
-            if not torch.is_tensor(trajectories):
-                trajectories = torch.tensor(trajectories).float()
+
+        if not torch.is_tensor(trajectories):
+            trajectories = torch.tensor(trajectories).float()
 
         # Split dataset into training and testing set
         if hasattr(data_config, 'test_proportion'):
@@ -53,7 +60,8 @@ class TrajectoryDataset(Dataset):
         # Add dictionary for switching training and testing set 
         self.states = {
             TRAIN: self.train_states,
-            EVAL: self.test_states
+            EVAL: self.test_states,
+            COMBINED: ConcatDataset((self.train_states, self.test_states)) 
         }
 
     def _split_dataset(self, all_states, test_proportion=0.2):
@@ -90,6 +98,13 @@ class TrajectoryDataset(Dataset):
         """Set the dataset to evaluation mode."""
         self.mode = EVAL 
 
+    def combine(self):
+        """
+        Combine the training and testing sets into a single dataset for
+        embedding
+        """
+        self.mode = COMBINED
+
     def load_data(self, data_config):
         """
         Load the dataset, this must be implemented in the subclass
@@ -98,9 +113,29 @@ class TrajectoryDataset(Dataset):
         """
         raise NotImplementedError("Subclass must implement load_data")
 
-    def fit_preprocess(self):
-        """
-        Fit parameters used for preprocessing e.g. singular value 
-        decomposition
-        """
-        raise NotImplementedError("Subclass must implement fit_preprocess")
+    @staticmethod
+    def load_vid_dict(root_data_dir):
+        raise NotImplementedError("Subclass must implement load_vid_dict")
+
+    @staticmethod
+    def convert_to_trajectories(vid_dict, traj_len=61, sliding_window=1):
+        for (video_name, pre_pose) in vid_dict.items():
+
+            pre_pose = pre_pose[:,0,:,:]
+            pre_pose = pre_pose.transpose(0,2,1)
+            pre_pose = pre_pose.reshape(pre_pose.shape[0], -1) 
+
+            # Pads the beginning and end of the sequence with duplicate frames
+            pad_vec = np.pad(
+                pre_pose, 
+                ((traj_len//2, traj_len-1-traj_len//2), (0, 0)),
+                mode='edge'
+            )
+
+            trajectories = np.stack([
+                pad_vec[i:len(pad_vec)+i-traj_len+1:sliding_window] for i in range(traj_len)
+            ], axis=1)
+
+            vid_dict[video_name] = trajectories
+
+        return vid_dict

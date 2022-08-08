@@ -89,6 +89,7 @@ def transform_mars_to_svd_components(data,
     data = np.concatenate([mouse_center, mouse_rotation, svd_data], axis=1)
 
     if save_svd:
+        print('-=-= Saving computed SVD to file =-=-')
         with open(os.path.join(f'{BASE_PATH}/svd/svd.pickle'), 'wb') as f:
             pickle.dump(svd_computer, f)
         with open(os.path.join(f'{BASE_PATH}/svd/mean.pickle'), 'wb') as f:

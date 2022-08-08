@@ -114,7 +114,7 @@ class TVAE(BaseSequentialModel):
 
         return self.log 
 
-    def reconstruct(self, states, num_samples=10, embed=False, device=torch.device('cpu')):
+    def reconstruct(self, data_loader, num_samples=10, device=torch.device('cpu')):
         """Reconstructs the input states using samples from the posterior
         
         Parameters
@@ -127,34 +127,50 @@ class TVAE(BaseSequentialModel):
 
         """
         with torch.no_grad():
+            recons = []
+            for batch_idx, states in enumerate(tqdm(data_loader)):
+                # Transpose the states to shape expected by generate_rollout
+                states = states.transpose(0,1).to(device)
 
-            if not torch.is_tensor(states):
-                # Assuming the states are a dataset
-                states = states[:]
+                # Encode the states
+                posterior = self.encoder(states)
 
-            # Transpose the states to shape expected by generate_rollout
-            states = states.transpose(0,1).to(device)
+                # Use sample from posterior to rollout samples and pick the best one
+                best_nll = torch.inf 
+                for _ in range(num_samples): 
+                    nll, reconstruction = self.decoder.generate_rollout(
+                        states,
+                        posterior.sample(), 
+                    )
+                    if nll < best_nll:
+                        best_recon = reconstruction
+                        best_nll = nll
 
-            # Encode the states
-            posterior = self.encoder(states)
-            
-            # Use sample from posterior to generate a reconstruction
-            # reconstruction = self.decoder(states, posterior.sample(), reconstruct=True) 
-            curr_z = posterior.sample()
-            best_nll = torch.inf 
-            for _ in range(num_samples): 
-                nll, reconstruction = self.decoder.generate_rollout(
-                    states,
-                    curr_z
-                )
-                if nll < best_nll:
-                    best_recon = reconstruction
-                    best_nll = nll
+                recons.append(best_recon.transpose(0,1))
 
-            if embed:
-                return best_recon.transpose(0,1), curr_z
-            else:
-                return best_recon.transpose(0,1)
+            return torch.cat(recons, dim=0) 
+
+    def embed(self, data_loader, device=torch.device('cpu')):
+        """Reconstructs the input states using samples from the posterior
+        
+        Parameters
+        ----------
+        states : torch.tensor
+            Tensor of shape [num_trajs, traj_len, num_feats]  
+
+        """
+        zs = []
+        with torch.no_grad():
+            for batch_idx, states in enumerate(tqdm(data_loader)):
+                # Transpose the states to shape expected by generate_rollout
+                states = states.transpose(0,1).to(device)
+
+                # Encode the states
+                posterior = self.encoder(states)
+
+                zs.append(posterior.mean)
+
+            return torch.cat(zs, dim=0)                
 
 
     def fit(self, data_loader, device=torch.device('cuda')):

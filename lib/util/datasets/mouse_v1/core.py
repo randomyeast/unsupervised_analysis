@@ -2,6 +2,7 @@ import os
 from re import I
 import sys
 import torch
+import pickle
 import numpy as np
 from scipy.signal import medfilt2d as median_filter
 
@@ -18,7 +19,7 @@ class MouseV1Dataset(TrajectoryDataset):
     # Declare mean and svd as none to allow for preprocessing to be done
     _svd, _mean = None, None
 
-    def __init__(self, data_config):
+    def __init__(self, data_config, trajectories=None):
         """
         Parameters
         ========== 
@@ -35,7 +36,7 @@ class MouseV1Dataset(TrajectoryDataset):
                     The length of the trajectory to use for training i.e.
                     the number of frames to use in each video.
         """
-        super().__init__(data_config)
+        super().__init__(data_config, trajectories)
 
     def load_data(self, data_config):
         """
@@ -61,7 +62,7 @@ class MouseV1Dataset(TrajectoryDataset):
             trajectories.
         """
         # Load the raw MARS keypoint estimates
-        vid_dict = self.load_raw_mars_keypoints(
+        vid_dict = self.load_vid_dict(
             data_config['root_data_dir']
         )
 
@@ -122,8 +123,8 @@ class MouseV1Dataset(TrajectoryDataset):
         """
         
         # If preprocessing a single pose
-        if len(trajectories.shape ) < 3:
-            data = np.expand_dims(data, axis=0)
+        if len(trajectories.shape) < 3:
+            trajectories = np.expand_dims(trajectories, axis=0)
         
         # Register the pose trajectories w.r.t. centroid and body angle
         trajectories = self.register_pose_trajectories(
@@ -133,6 +134,9 @@ class MouseV1Dataset(TrajectoryDataset):
 
         # Filter and normalize the pose estimates
         trajectories = self.med_filter(trajectories)
+
+        # Check if there's a pre-computed SVD and mean
+        self.check_precomputed_svd()
 
         # Learn the SVD of the combined videos --- PROBLEM IS HERE
         data, self._svd, self._mean = transform_mars_to_svd_components(
@@ -296,30 +300,8 @@ class MouseV1Dataset(TrajectoryDataset):
 
         return trajectories 
 
-        
-    def convert_to_trajectories(self, vid_dict, traj_len=61, sliding_window=1):
-        for (video_name, pre_pose) in vid_dict.items():
-
-            pre_pose = pre_pose[:,0,:,:]
-            pre_pose = pre_pose.transpose(0,2,1)
-            pre_pose = pre_pose.reshape(pre_pose.shape[0], -1) 
-
-            # Pads the beginning and end of the sequence with duplicate frames
-            pad_vec = np.pad(
-                pre_pose, 
-                ((traj_len//2, traj_len-1-traj_len//2), (0, 0)),
-                mode='edge'
-            )
-
-            trajectories = np.stack([
-                pad_vec[i:len(pad_vec)+i-traj_len+1:sliding_window] for i in range(traj_len)
-            ], axis=1)
-
-            vid_dict[video_name] = trajectories
-
-        return vid_dict
- 
-    def load_raw_mars_keypoints(self, root_data_dir):
+    @staticmethod
+    def load_vid_dict(root_data_dir):
         # TODO: add option for subset of videos
         videos = immediate_sub_dirs(root_data_dir)
         vid_dict = {}
@@ -330,9 +312,28 @@ class MouseV1Dataset(TrajectoryDataset):
 
         return vid_dict
 
-    
+    def check_precomputed_svd(self):
+        """
+        Checks to see if SVD has been pre-computed, if so, loads it.
+        """
+        # Look to see if there is a pre-computed SVD
+        svd_base_path = os.path.join(
+            os.getcwd(), 'lib',
+            'util', 'datasets',
+            'mouse_v1', 'svd'
+        )
+        
+        if os.path.exists(os.path.join(svd_base_path, 'svd.pickle')):
+            print('-=-= Using pre-computed SVD =-=-')
+            with open(os.path.join(svd_base_path, 'svd.pickle'), 'rb') as f:
+                self._svd = pickle.load(f)
+        if os.path.exists(os.path.join(svd_base_path, 'mean.pickle')):
+            print('-=-= Using pre-computed mean =-=-')
+            with open(os.path.join(svd_base_path, 'mean.pickle'), 'rb') as f:
+                self._mean = pickle.load(f)
+
     @staticmethod
-    def plot_trajectory(seq, path='./gifs/traj.gif'):
+    def plot_trajectory(seq, path='./gifs/traj'):
         """
         Plots a single mouse trajectory.
         """

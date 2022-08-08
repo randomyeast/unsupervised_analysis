@@ -21,10 +21,9 @@ Overview
 -       The goal of this documentation is both to explain how each
         model variant works and make it as easy as possible to adapt
         the models to work on new datasets.
--       The documentation for each model is split up into a concise
-        reference document, meant for those implementing / modifying
-        the models, as well as a section with more explicit mathematical
-        details.
+-       The documentation for each model is split up into a reference
+	document, meant for those implementing / modifying the models,
+	as well as a section with more explicit mathematical details.
 -       Any suggestions are more than welcome.
 
 
@@ -118,6 +117,8 @@ Training the model
         training you have. Within each of these directories, there will be a file called
         ``best.pt`` which will be the checkpoint with the lowest negative-log-likelihood
         on the evaluation set for that stage.
+-       To monitor the model's training progress with tensorboard, in the terminal type:
+        ``tensorboard --logdir=./experiments/example_tvae``
 
 +++++++++++++++++++++++++++++++++++++++++
 Generating reconstructions (not done yet)

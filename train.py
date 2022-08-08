@@ -75,6 +75,12 @@ if __name__ == "__main__":
     # Create tensorboard writer for logging
     writer = SummaryWriter(os.path.join(args.config_dir, 'log'))
 
+    # Create directory for saving checkpoints at each stage
+    for stage_num, _ in enumerate(train_config['num_epochs']):
+        stage_dir = os.path.join(args.config_dir, 'checkpoints', f'stage_{stage_num}')
+        if not os.path.exists(stage_dir):
+            os.mkdir(stage_dir)
+
     # Train model
     writer = train(model, data_loader, train_config, writer)
     writer.close()

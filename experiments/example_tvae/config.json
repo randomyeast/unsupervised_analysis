@@ -23,7 +23,10 @@
         "device": "cuda"
     },
     "eval_config": {
+        "root_data_dir": "/home/andrewulmer/data/parker_lab/balanced/",
+        "save_name": "example_tvae",
         "device": "cpu",
-        "batch_size": 512
+        "batch_size": 512,
+        "num_samples": 5
     }
 }

@@ -129,6 +129,17 @@ to the recurrent unit at each timestep.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="lib.models.tvae.core.TVAE.embed">
+<span class="sig-name descname"><span class="pre">embed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">device(type='cpu')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.tvae.core.TVAE.embed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reconstructs the input states using samples from the posterior</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>states</strong> (<em>torch.tensor</em>) – Tensor of shape [num_trajs, traj_len, num_feats]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="lib.models.tvae.core.TVAE.fit">
 <span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">device(type='cuda')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.models.tvae.core.TVAE.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits the model using the provided data</p>

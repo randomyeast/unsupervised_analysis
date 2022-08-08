@@ -60,10 +60,9 @@ of the generated embeddings and VQ-TREBA does not.</p></li>
 <li><p>The goal of this documentation is both to explain how each
 model variant works and make it as easy as possible to adapt
 the models to work on new datasets.</p></li>
-<li><p>The documentation for each model is split up into a concise
-reference document, meant for those implementing / modifying
-the models, as well as a section with more explicit mathematical
-details.</p></li>
+<li><p>The documentation for each model is split up into a reference
+document, meant for those implementing / modifying the models,
+as well as a section with more explicit mathematical details.</p></li>
 <li><p>Any suggestions are more than welcome.</p></li>
 </ul>
 </section>
@@ -159,6 +158,8 @@ within the <code class="docutils literal notranslate"><span class="pre">./experi
 training you have. Within each of these directories, there will be a file called
 <code class="docutils literal notranslate"><span class="pre">best.pt</span></code> which will be the checkpoint with the lowest negative-log-likelihood
 on the evaluation set for that stage.</p></li>
+<li><p>To monitor the model’s training progress with tensorboard, in the terminal type:
+<code class="docutils literal notranslate"><span class="pre">tensorboard</span> <span class="pre">--logdir=./experiments/example_tvae</span></code></p></li>
 </ul>
 </section>
 <section id="generating-reconstructions-not-done-yet">
