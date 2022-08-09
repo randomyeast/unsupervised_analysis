@@ -75,7 +75,8 @@ Structuring the folders containing your data
 ++++++++++++++++++++++++++++++++++++++++++++
 *       In all likelihood, you are learning representations of video data. Much of the 
 	code in this repo assumes your data has the following structure:
-	
+
+        .. _file_structure:
 	.. image:: images/data_structure.png
 	
 	where ``vid_1``, ``vid_2``, and ``vid_3`` corresponds to directories which 
@@ -111,6 +112,12 @@ Creating a new dataset object
         This is where you will do any preprocessing of the data loaded in via ``load_data``.
         This function must also return a ``np.array`` or ``torch.tensor`` of the shape
         ``[num_trajs, traj_len, num_features]``. 
+
+*       The fourth method you need to override is ``postprocess(trajectories)``. If you
+        perform any preprocessing of your input data (e.g. decomposition) and you want
+        to see what the reconstructions of the original inputs look like, you should
+        make this function perform the inverse of whatever your postprocessing steps 
+        are.
 
 ++++++++++++++++++
 Training the model

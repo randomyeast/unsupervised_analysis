@@ -65,7 +65,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.__getitem__">
 <span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.__getitem__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a fixed length trajectory from either training or testing set.</p>
+<dd><p>Return a fixed length trajectory from either training or testing set
+depending on the current mode.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -76,8 +77,9 @@ working with any new type of dataset, create a new subclass of this
 class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data_config</strong> (<em>dict</em>) – <dl class="simple">
-<dt>A dictionary containing the following model attributes:</dt><dd><ul class="simple">
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_config</strong> (<em>dict</em>) – <dl class="simple">
+<dt>A dictionary containing the following model attributes:</dt><dd><ul>
 <li><dl class="simple">
 <dt><cite>test_proportion</cite>: float (optional)</dt><dd><p>Proportion of dataset to use for testing.</p>
 </dd>
@@ -93,7 +95,12 @@ implementation of the subclass.</p>
 </ul>
 </dd>
 </dl>
-</p>
+</p></li>
+<li><p><strong>trajectories</strong> (<em>np.array</em><em> (</em><em>optional</em><em>)</em>) – A numpy array of shape <code class="docutils literal notranslate"><span class="pre">[num_trajectories,</span> <span class="pre">trajectory_length,</span> <span class="pre">feature_dim]</span></code>
+containing the trajectories to use. If not provided, the dataset should be
+loaded from disk in the <code class="docutils literal notranslate"><span class="pre">load_data</span></code> method.</p></li>
+<li><p><strong>preprocess</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – Whether to preprocess the trajectories before returning them.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -112,6 +119,35 @@ embedding</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.convert_to_trajectories">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">convert_to_trajectories</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vid_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traj_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">61</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sliding_window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.convert_to_trajectories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility function used to convert sequences of frames into fixed
+length trajectories with a sliding window.</p>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The inputs to each of the currently supported models are fixed length
+trajectories. This method will take a window of size <code class="docutils literal notranslate"><span class="pre">traj_len</span></code> and
+slide it over each video, with respect to time, extracting a fixed
+length trajectory for each window. The window is moved by a step size
+of <code class="docutils literal notranslate"><span class="pre">sliding_window</span></code>. If you increase <code class="docutils literal notranslate"><span class="pre">sliding_window</span></code>, you will
+be sampling fewer trajectories from the video.</p></li>
+<li><p>The front and back of the videos are padded with repeated frames.</p></li>
+<li><p>By convention, each embedding or cluster assignment produced by a model
+is treated as corresponding to the frame in the middle of the window.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vid_dict</strong> (<em>dict</em>) – Dictionary where the keys are the video names and the values
+are <code class="docutils literal notranslate"><span class="pre">np.array</span></code> of shape <code class="docutils literal notranslate"><span class="pre">[num_frames,</span> <span class="pre">feature_dim]</span></code>.</p></li>
+<li><p><strong>traj_len</strong> (<em>int</em><em> (</em><em>optional</em><em>)</em>) – The length of each trajectory to extract from the video.</p></li>
+<li><p><strong>sliding_window</strong> (<em>int</em><em> (</em><em>optional</em><em>)</em>) – The number of frames to slide the trajectory window by.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.eval">
 <span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.eval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the dataset to evaluation mode.</p>
@@ -123,6 +159,35 @@ embedding</p>
 <dd><p>Load the dataset, this must be implemented in the subclass
 used for training the model. It must return a tensor of shape
 <code class="docutils literal notranslate"><span class="pre">[num_trajectories,</span> <span class="pre">trajectory_length,</span> <span class="pre">feature_dim]</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.load_vid_dict">
+<span class="sig-name descname"><span class="pre">load_vid_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root_data_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.load_vid_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will iterate through <code class="docutils literal notranslate"><span class="pre">root_data_dir</span></code> and load
+the data corresponding to each video into a dictionary
+with the key being the video name and the value being the
+data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.load_video">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_video</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.load_video" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the video data from the given path. This must be
+implemented in the subclass since it depends on modality / format
+of the data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.postprocess">
+<span class="sig-name descname"><span class="pre">postprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trajectories</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.postprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>No postprocessing by default, but can be implemented in the subclass</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.util.datasets.core.TrajectoryDataset.preprocess">
+<span class="sig-name descname"><span class="pre">preprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trajectories</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.core.TrajectoryDataset.preprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>No preprocessing by default, but can be implemented in the subclass</p>
 </dd></dl>
 
 <dl class="py method">

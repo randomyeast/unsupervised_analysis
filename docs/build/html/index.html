@@ -116,7 +116,7 @@ documentation for each model.</p></li>
 <ul>
 <li><p>In all likelihood, you are learning representations of video data. Much of the
 code in this repo assumes your data has the following structure:</p>
-<img alt="_images/data_structure.png" src="_images/data_structure.png" />
+<img alt="_images/data_structure.png" id="file-structure" src="_images/data_structure.png" />
 <p>where <code class="docutils literal notranslate"><span class="pre">vid_1</span></code>, <code class="docutils literal notranslate"><span class="pre">vid_2</span></code>, and <code class="docutils literal notranslate"><span class="pre">vid_3</span></code> corresponds to directories which
 contain the data you are learning representations of. The outputs of the
 model corresponding to a given video will be stored in that video’s directory.</p>
@@ -149,6 +149,11 @@ for <code class="docutils literal notranslate"><span class="pre">load_video</spa
 This is where you will do any preprocessing of the data loaded in via <code class="docutils literal notranslate"><span class="pre">load_data</span></code>.
 This function must also return a <code class="docutils literal notranslate"><span class="pre">np.array</span></code> or <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code> of the shape
 <code class="docutils literal notranslate"><span class="pre">[num_trajs,</span> <span class="pre">traj_len,</span> <span class="pre">num_features]</span></code>.</p></li>
+<li><p>The fourth method you need to override is <code class="docutils literal notranslate"><span class="pre">postprocess(trajectories)</span></code>. If you
+perform any preprocessing of your input data (e.g. decomposition) and you want
+to see what the reconstructions of the original inputs look like, you should
+make this function perform the inverse of whatever your postprocessing steps
+are.</p></li>
 </ul>
 </section>
 <section id="training-the-model">

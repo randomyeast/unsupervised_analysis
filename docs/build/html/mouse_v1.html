@@ -55,33 +55,41 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.util.datasets.mouse_v1.core.MouseV1Dataset.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectories</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.mouse_v1.core.MouseV1Dataset.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>This is a basic dataset object built to extract and preprocess
+MARS keypoint estimates from the directory structure explained
+in the <a class="reference internal" href="index.html#file-structure"><span class="std std-ref">TVAE quickstart guide</span></a>. The preprocessing steps and the
+explanation for each can be found in
+<a class="reference internal" href="#lib.util.datasets.mouse_v1.core.MouseV1Dataset.preprocess" title="lib.util.datasets.mouse_v1.core.MouseV1Dataset.preprocess"><code class="xref py py-meth docutils literal notranslate"><span class="pre">preprocess</span></code></a></p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data_config</strong> (<em>dict</em>) – <dl class="simple">
-<dt>A dictionary containing the following dataset attributes:</dt><dd><ul class="simple">
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_config</strong> (<em>dict</em>) – <dl class="simple">
+<dt>A dictionary containing the following dataset attributes:</dt><dd><ul>
 <li><dl class="simple">
 <dt><cite>root_data_dir</cite>: str</dt><dd><p>The root directory to look for MARS keypoint estimates.
-See &lt;add link&gt; note on how to structure directories for
-search to work properly</p>
+See <a class="reference internal" href="index.html#file-structure"><span class="std std-ref">TVAE quickstart guide</span></a> note
+on how to structure directories for search to work properly</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><cite>dataset_type</cite>: str</dt><dd><p>The type of dataset to load (e.g. ‘mouse_v1’) - used in
-the <cite>load_dataset</cite> method &lt;add link&gt;</p>
+<dt><cite>dataset_type</cite>: str</dt><dd><p>The type of dataset to load (e.g. ‘mouse_v1’)</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><cite>traj_len</cite>: int</dt><dd><p>The length of the trajectory to use for training i.e.
-the number of frames to use in each video.</p>
+<dt><cite>traj_len</cite>: int</dt><dd><p>The length of each trajectory to use as input for training</p>
 </dd>
 </dl>
 </li>
 </ul>
 </dd>
 </dl>
-</p>
+</p></li>
+<li><p><strong>trajectories</strong> (<em>np.array</em><em> (</em><em>optional</em><em>)</em>) – Array of shape <code class="docutils literal notranslate"><span class="pre">[num_trajs,</span> <span class="pre">traj_len,</span> <span class="pre">n_features]</span></code> of pose
+trajectories to preprocess. Can bypass loading directly from
+disk, if passing this argument.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -101,7 +109,7 @@ into trajectories of length specified by <code class="docutils literal notransla
 <ul class="simple">
 <li><p>This method assumes that there are two sets of keypoint estimates
 in the <code class="docutils literal notranslate"><span class="pre">.json</span></code> files output by MARS, both representing the same
-mouse.</p></li>
+mouse - only one will be used.</p></li>
 </ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -111,6 +119,24 @@ constructor.</p>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>trajectories</strong> – Array of shape <code class="docutils literal notranslate"><span class="pre">[num_trajs,</span> <span class="pre">traj_len,</span> <span class="pre">n_features]</span></code> of pose
 trajectories.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lib.util.datasets.mouse_v1.core.MouseV1Dataset.load_video">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_video</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.mouse_v1.core.MouseV1Dataset.load_video" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a MARS keypoints json file into a numpy array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Path to the MARS keypoints json file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>trajectories</strong> – Array of shape <code class="docutils literal notranslate"><span class="pre">[num_frames,</span> <span class="pre">num_mice,</span> <span class="pre">num_dimensions,</span> <span class="pre">num_keypoints]</span></code>
+of MARS keypoints in a video.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.array</p>
@@ -144,22 +170,46 @@ pose trajectories</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.util.datasets.mouse_v1.core.MouseV1Dataset.plot_reconstruction">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plot_reconstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./gifs/recon.gif'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.mouse_v1.core.MouseV1Dataset.plot_reconstruction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot original and reconstructed trajectories
-on the same plot</p>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plot_reconstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./gifs/recon'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.mouse_v1.core.MouseV1Dataset.plot_reconstruction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot original and reconstructed trajectories on the same plot
+for comparison</p>
+<p class="rubric">Notes</p>
+<p>As in <a class="reference internal" href="#lib.util.datasets.mouse_v1.core.MouseV1Dataset.plot_trajectory" title="lib.util.datasets.mouse_v1.core.MouseV1Dataset.plot_trajectory"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plot_trajectory</span></code></a>,
+this function assumes that the keypoints in each frame of <code class="docutils literal notranslate"><span class="pre">orig</span></code> and <code class="docutils literal notranslate"><span class="pre">recon</span></code> are tiled
+<code class="docutils literal notranslate"><span class="pre">[x1,</span> <span class="pre">y1,</span> <span class="pre">x2,</span> <span class="pre">y2,</span> <span class="pre">...]</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>orig</strong> (<em>np.array</em>) – Array of shape <code class="docutils literal notranslate"><span class="pre">[traj_len,</span> <span class="pre">num_keypoints]</span></code> representing the
+original trajectory passed as input to the model.</p></li>
+<li><p><strong>recon</strong> (<em>np.array</em>) – Array of shape <code class="docutils literal notranslate"><span class="pre">[traj_len,</span> <span class="pre">num_keypoints]</span></code> representing the
+reconstructed trajectory from the model.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.util.datasets.mouse_v1.core.MouseV1Dataset.plot_trajectory">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plot_trajectory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./gifs/traj'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.mouse_v1.core.MouseV1Dataset.plot_trajectory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots a single mouse trajectory.</p>
+<dd><p>Plots a single mouse trajectory to a gif at the path specified</p>
+<p class="rubric">Notes</p>
+<p>This function assumes that the keypoints in each frame of <code class="docutils literal notranslate"><span class="pre">seq</span></code>
+are tiled as follows <code class="docutils literal notranslate"><span class="pre">[x1,</span> <span class="pre">y1,</span> <span class="pre">x2,</span> <span class="pre">y2,</span> <span class="pre">...]</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seq</strong> (<em>np.array</em>) – Array of shape <code class="docutils literal notranslate"><span class="pre">[traj_len,</span> <span class="pre">num_keypoints]</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.util.datasets.mouse_v1.core.MouseV1Dataset.postprocess">
 <span class="sig-name descname"><span class="pre">postprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trajectories</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.mouse_v1.core.MouseV1Dataset.postprocess" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes one or more preprocessed trajectories and reconstructs
-them from the decomposed pose and singular vectors.</p>
+them from the decomposed pose and singular vectors. The
+singular value decomposition must have been fit prior to
+calling this function.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>trajectories</strong> (<em>np.array</em>) – Array of shape <code class="docutils literal notranslate"><span class="pre">[num_trajs,</span> <span class="pre">traj_len,</span> <span class="pre">n_features]</span></code> or
@@ -195,7 +245,7 @@ base and the tail base is aligned with the y-axis.</p>
 </li>
 <li><dl class="simple">
 <dt><cite>Decomposition</cite>:</dt><dd><ul>
-<li><p>Combines all trajectories into one pose matrix</p></li>
+<li><p>Concatenates all trajectories into one pose matrix</p></li>
 <li><p>Centers the poses such that the neck base is at the origin
 and stores the original coordinates of the neck base</p></li>
 <li><p>Rotates the poses such that the vector formed by the neck base
@@ -248,13 +298,20 @@ centroid and body-angle registered pose trajectories</p>
 <dd class="field-even"><p><strong>trajectories</strong> (<em>np.array</em>) – Array of shape (<code class="docutils literal notranslate"><span class="pre">[num_traj,</span> <span class="pre">traj_len,</span> <span class="pre">n_features]</span></code>) pose
 trajectories to register.</p>
 </dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>trajectories</strong> – Array of shape <code class="docutils literal notranslate"><span class="pre">[num_trajs,</span> <span class="pre">traj_len,</span> <span class="pre">n_features]</span></code> of
+rotationally registered pose trajectories.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.util.datasets.mouse_v1.core.MouseV1Dataset.register_mars_trajectory_centroids">
 <span class="sig-name descname"><span class="pre">register_mars_trajectory_centroids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trajectories</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traj_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">61</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lib.util.datasets.mouse_v1.core.MouseV1Dataset.register_mars_trajectory_centroids" title="Permalink to this definition">¶</a></dt>
-<dd><p>Register the pose centroids on the starting frame</p>
+<dd><p>Register the pose centroids at the origin on the starting frame</p>
 <img alt="_images/centroid_alignment.png" src="_images/centroid_alignment.png" />
 <dl class="field-list simple">
 <dt class="field-odd">Align<span class="colon">:</span></dt>
@@ -263,6 +320,13 @@ trajectories to register.</p>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>trajectories</strong> (<em>np.array</em>) – Array of shape (<code class="docutils literal notranslate"><span class="pre">[num_traj,</span> <span class="pre">traj_len,</span> <span class="pre">n_features]</span></code>) pose
 trajectories to register.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>trajectories</strong> – Array of shape <code class="docutils literal notranslate"><span class="pre">[num_trajs,</span> <span class="pre">traj_len,</span> <span class="pre">n_features]</span></code> of
+centroid registered pose trajectories.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array</p>
 </dd>
 </dl>
 </dd></dl>
@@ -277,6 +341,13 @@ this function calls <code class="docutils literal notranslate"><span class="pre"
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>trajectories</strong> (<em>np.array</em>) – Array of shape <code class="docutils literal notranslate"><span class="pre">[num_trajs,</span> <span class="pre">traj_len,</span> <span class="pre">num_feats]</span></code> of pose
 trajectories to register</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>trajectories</strong> – Array of shape <code class="docutils literal notranslate"><span class="pre">[num_trajs,</span> <span class="pre">traj_len,</span> <span class="pre">n_features]</span></code> of
+centroid and rotationally registered pose trajectories</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
 </dd>
 </dl>
 </dd></dl>
