@@ -1,5 +1,7 @@
+import os
 import torch
 import torch.nn as nn
+from glob import glob
 
 from lib.util.log import LogEntry
 
@@ -146,3 +148,34 @@ class BaseSequentialModel(nn.Module):
         model_loss.backward(retain_graph=True)
         nn.utils.clip_grad_norm_(self.model_params(), grad_clip)
         self.model_optimizer.step()
+
+    def load_best_checkpoint(self, config_dir):
+        """Loads a model checkpoint from the experiment directory, using the correct naming convention
+
+        Parameters
+        ---------- 
+        config : str 
+            The path to the directory for this experiment.
+        name : str
+            The name to load the checkpoint from.
+        """
+        stage_dirs = [d for d in glob(f'{config_dir}/checkpoints/*')]
+        last_stage = stage_dirs[-1]
+        best_path = os.path.join(last_stage, 'best.pt')
+        self.load_state_dict(torch.load(best_path))
+
+    def prepare_stage(self, config_dir):
+        """
+        Loads the best checkpoint from the previous stage, when moving to
+        the next stage. Also creates directory for storing checkpoints in
+        the next stage.
+       
+        Parameters
+        ----------
+        config_dir: str
+            The path to the directory for this experiment.
+        """
+        if self.stage > 0:
+            self.load_best_checkpoint(config_dir)
+        stage_path = os.path.join(config_dir, 'checkpoints', f'stage_{self.stage}')
+        os.mkdir(stage_path)

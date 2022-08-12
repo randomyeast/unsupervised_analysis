@@ -130,7 +130,7 @@ model corresponding to a given video will be stored in that video’s directory.
 a new dataset object which inherits from the base module
 <a class="reference internal" href="datasets.html#lib.util.datasets.core.TrajectoryDataset" title="lib.util.datasets.core.TrajectoryDataset"><code class="xref py py-mod docutils literal notranslate"><span class="pre">TrajectoryDataset</span></code></a>.
 An example dataset is available here:
-<a class="reference internal" href="mouse_v1.html#lib.util.datasets.mouse_v1.core.MouseV1Dataset" title="lib.util.datasets.mouse_v1.core.MouseV1Dataset"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MouseV1Dataset</span></code></a></p></li>
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">MouseV1Dataset</span></code></p></li>
 <li><p>The first method from <a class="reference internal" href="datasets.html#lib.util.datasets.core.TrajectoryDataset" title="lib.util.datasets.core.TrajectoryDataset"><code class="xref py py-mod docutils literal notranslate"><span class="pre">TrajectoryDataset</span></code></a>
 you need to override in your new dataset object is <code class="docutils literal notranslate"><span class="pre">load_data(data_config)</span></code>.</p>
 <ul>
@@ -180,7 +180,7 @@ across machines see this note &lt;link&gt;.</p></li>
 generate reconstructions for all videos in the <code class="docutils literal notranslate"><span class="pre">root_data_dir</span></code> specified
 in <code class="docutils literal notranslate"><span class="pre">eval_config</span></code> and outputs them to their respective folders.</p></li>
 <li><p>You can also generate random reconstructions from one of the videos in <code class="docutils literal notranslate"><span class="pre">root_data_dir</span></code>
-using <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">plot_random_reconstructions</span> <span class="pre">--config_dir</span>
+using <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">plot_example_reconstructions.py</span> <span class="pre">--config_dir</span>
 <span class="pre">./experiments/&lt;your_experiment_name&gt;</span> <span class="pre">--num_reconstructions</span> <span class="pre">&lt;some_integer&gt;</span></code>. The output
 of this will be stored in a <code class="docutils literal notranslate"><span class="pre">random_reconstructions</span></code> folder within your experiment
 folder.</p></li>

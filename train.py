@@ -17,6 +17,9 @@ def train(model, data_loader, train_config, writer):
         model.stage = stage_num
         best_val_log = {}
 
+        # Setup stage and load model from checkpoint if necessary
+        model.prepare_stage(args.config_dir)
+
         print(f'-=-= Training stage {stage_num} =-=-')
         for epoch in tqdm(range(stage_epochs)):
             # Run a single epoch of training and print out the loss
@@ -35,7 +38,7 @@ def train(model, data_loader, train_config, writer):
                 if epoch == 0 or sum(epoch_val_log.losses.values()) < \
                                  sum(best_val_log.losses.values()):
 
-                    print(f'-=-= Saving best model for stage {model.stage} =-=-') 
+                    print(f'-=-= Saving best model for stage {model.stage} @ epoch {epoch} =-=-') 
                     best_val_log = epoch_val_log   
                     model.save_checkpoint(args.config_dir, name=f'best_{epoch}')
 
@@ -74,12 +77,6 @@ if __name__ == "__main__":
 
     # Create tensorboard writer for logging
     writer = SummaryWriter(os.path.join(args.config_dir, 'log'))
-
-    # Create directory for saving checkpoints at each stage
-    for stage_num, _ in enumerate(train_config['num_epochs']):
-        stage_dir = os.path.join(args.config_dir, 'checkpoints', f'stage_{stage_num}')
-        if not os.path.exists(stage_dir):
-            os.mkdir(stage_dir)
 
     # Train model
     writer = train(model, data_loader, train_config, writer)

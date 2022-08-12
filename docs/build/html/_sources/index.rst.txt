@@ -142,7 +142,7 @@ Generating reconstructions
         generate reconstructions for all videos in the ``root_data_dir`` specified
         in ``eval_config`` and outputs them to their respective folders.
 -       You can also generate random reconstructions from one of the videos in ``root_data_dir``
-        using ``python plot_random_reconstructions --config_dir 
+        using ``python plot_example_reconstructions.py --config_dir 
         ./experiments/<your_experiment_name> --num_reconstructions <some_integer>``. The output
         of this will be stored in a ``random_reconstructions`` folder within your experiment
         folder.
